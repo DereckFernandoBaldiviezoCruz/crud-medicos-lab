@@ -1,26 +1,22 @@
-// database.js
-import { Sequelize } from 'sequelize';
+import Sequelize from 'sequelize';
+import dotenv from 'dotenv';
 
-export const sequelize = new Sequelize({
-  dialect: 'postgres',
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-});
+dotenv.config(); // Cargar variables de entorno desde .env
 
-// Verificar conexión
-async function testDatabaseConnection() {
-  try {
-    await sequelize.authenticate();
-    console.log('Database connection has been established successfully.');
-  } catch (error) {
-    console.error('Unable to connect to the database:', error);
+export const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT, // Utilizar el puerto definido en las variables de entorno
+    dialect: 'postgres',
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000,
+    },
+    logging: false,
   }
-}
-
-// Llamar a la función para probar la conexión
-testDatabaseConnection();
-
-export default sequelize;
+);
