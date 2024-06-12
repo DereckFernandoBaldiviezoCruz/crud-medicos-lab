@@ -1,3 +1,4 @@
+// medic.routes.js
 import { Router } from 'express';
 import {
   getMedics,
@@ -6,7 +7,7 @@ import {
   getMedic,
   deleteMedic,
   getMedicOffices,
-} from '../controllers/medic.controller.js';
+} from '../controllers/medic.controller.js'; // Asegúrate de que la ruta sea correcta aquí
 
 const router = Router();
 
