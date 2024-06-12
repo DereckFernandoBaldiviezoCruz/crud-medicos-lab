@@ -1,9 +1,9 @@
-const { Medic } = require("../models/medic.js");
+import { Medic } from '../models/medic.js';
 
-async function getMedics(req, res) {
+export async function getMedics(req, res) {
   try {
     const medics = await Medic.findAll({
-      attributes: ["id", "name", "speciality", "phone", "image"],
+      attributes: ['id', 'name', 'speciality', 'phone', 'image'],
     });
     res.json(medics);
   } catch (error) {
@@ -13,10 +13,10 @@ async function getMedics(req, res) {
   }
 }
 
-async function createMedic(req, res) {
+export async function createMedic(req, res) {
   const { name, speciality, phone, image, email, services, certifications, state } = req.body;
   try {
-    let newMedic = await Medic.create({
+    const newMedic = await Medic.create({
       name,
       speciality,
       phone,
@@ -26,7 +26,7 @@ async function createMedic(req, res) {
       certifications,
       state,
     }, {
-      fields: ["name", "speciality", "phone", "image", "email", "services", "certifications", "state"],
+      fields: ['name', 'speciality', 'phone', 'image', 'email', 'services', 'certifications', 'state'],
     });
     return res.json(newMedic);
   } catch (error) {
@@ -36,7 +36,7 @@ async function createMedic(req, res) {
   }
 }
 
-async function getMedic(req, res) {
+export async function getMedic(req, res) {
   const { id } = req.params;
   try {
     const medic = await Medic.findOne({
@@ -52,13 +52,13 @@ async function getMedic(req, res) {
   }
 }
 
-const updateMedic = async (req, res) => {
+export const updateMedic = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, speciality, phone, email, services, certifications, state } = req.body;
 
     const medic = await Medic.findByPk(id);
-    if (!medic) return res.status(404).json({ message: "Medic not found" });
+    if (!medic) return res.status(404).json({ message: 'Medic not found' });
 
     medic.name = name;
     medic.speciality = speciality;
@@ -75,7 +75,7 @@ const updateMedic = async (req, res) => {
   }
 };
 
-async function deleteMedic(req, res) {
+export async function deleteMedic(req, res) {
   const { id } = req.params;
   try {
     await Medic.destroy({
@@ -89,11 +89,11 @@ async function deleteMedic(req, res) {
   }
 }
 
-async function getMedicOffices(req, res) {
+export async function getMedicOffices(req, res) {
   const { id } = req.params;
   try {
     const offices = await Office.findAll({
-      attributes: ["id", "medicId", "name"],
+      attributes: ['id', 'medicId', 'name'],
       where: { medicId: id },
     });
     res.json(offices);
@@ -101,12 +101,3 @@ async function getMedicOffices(req, res) {
     return res.status(500).json({ message: e.message });
   }
 }
-
-module.exports = {
-  getMedics,
-  createMedic,
-  getMedic,
-  updateMedic,
-  deleteMedic,
-  getMedicOffices
-};

@@ -1,7 +1,7 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../database/database.js');
+import { DataTypes } from 'sequelize';
+import { sequelize } from '../database/database.js';
 
-const Medic = sequelize.define("Medic", {
+export const Medic = sequelize.define('Medic', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -24,22 +24,20 @@ const Medic = sequelize.define("Medic", {
   },
   image: {
     type: DataTypes.STRING,
-    defaultValue: "",
+    defaultValue: '',
   },
   services: {
     type: DataTypes.STRING,
-    defaultValue: "",
+    defaultValue: '',
   },
   certifications: {
     type: DataTypes.STRING,
-    defaultValue: "",
+    defaultValue: '',
   },
   state: {
     type: DataTypes.STRING,
-    defaultValue: "activo",
+    defaultValue: 'activo',
   },
 }, {
   timestamps: false,
 });
-
-module.exports = { Medic };
