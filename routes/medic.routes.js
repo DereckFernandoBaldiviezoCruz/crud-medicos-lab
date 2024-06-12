@@ -7,7 +7,7 @@ import {
   getMedic,
   deleteMedic,
   getMedicOffices,
-} from '../controllers/medic.controller.js'; // Asegúrate de que la ruta sea correcta aquí
+} from '../controllers/medic.controllers.js'; // Asegúrate de que la ruta sea correcta aquí
 
 const router = Router();
 
