@@ -1,6 +1,6 @@
-import { Medic } from "../models/medic.js";
+const { Medic } = require("../models/medic.js");
 
-export async function getMedics(req, res) {
+async function getMedics(req, res) {
   try {
     const medics = await Medic.findAll({
       attributes: ["id", "name", "speciality", "phone", "image"],
@@ -13,7 +13,7 @@ export async function getMedics(req, res) {
   }
 }
 
-export async function createMedic(req, res) {
+async function createMedic(req, res) {
   const { name, speciality, phone, image, email, services, certifications, state } = req.body;
   try {
     let newMedic = await Medic.create({
@@ -36,7 +36,7 @@ export async function createMedic(req, res) {
   }
 }
 
-export async function getMedic(req, res) {
+async function getMedic(req, res) {
   const { id } = req.params;
   try {
     const medic = await Medic.findOne({
@@ -52,7 +52,7 @@ export async function getMedic(req, res) {
   }
 }
 
-export const updateMedic = async (req, res) => {
+const updateMedic = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, speciality, phone, email, services, certifications, state } = req.body;
@@ -75,7 +75,7 @@ export const updateMedic = async (req, res) => {
   }
 };
 
-export async function deleteMedic(req, res) {
+async function deleteMedic(req, res) {
   const { id } = req.params;
   try {
     await Medic.destroy({
@@ -89,7 +89,7 @@ export async function deleteMedic(req, res) {
   }
 }
 
-export async function getMedicOffices(req, res) {
+async function getMedicOffices(req, res) {
   const { id } = req.params;
   try {
     const offices = await Office.findAll({
@@ -101,3 +101,12 @@ export async function getMedicOffices(req, res) {
     return res.status(500).json({ message: e.message });
   }
 }
+
+module.exports = {
+  getMedics,
+  createMedic,
+  getMedic,
+  updateMedic,
+  deleteMedic,
+  getMedicOffices
+};

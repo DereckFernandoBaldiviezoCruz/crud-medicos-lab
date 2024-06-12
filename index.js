@@ -1,11 +1,9 @@
-import express from 'express';
-import morgan from 'morgan';
-import bodyParser from 'body-parser';
-import { sequelize } from './database/database.js';
-import medicRoutes from './routes/medic.routes.js';
-import dotenv from 'dotenv';
-
-dotenv.config();
+const express = require('express');
+const morgan = require('morgan');
+const bodyParser = require('body-parser');
+const { sequelize } = require('./database/database.js');
+const medicRoutes = require('./routes/medic.routes.js');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;

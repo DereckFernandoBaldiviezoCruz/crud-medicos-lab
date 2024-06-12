@@ -1,7 +1,7 @@
-import { DataTypes } from "sequelize";
-import { sequelize } from "../database/database.js";
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../database/database.js');
 
-export const Medic = sequelize.define("Medic", {
+const Medic = sequelize.define("Medic", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -41,3 +41,5 @@ export const Medic = sequelize.define("Medic", {
 }, {
   timestamps: false,
 });
+
+module.exports = { Medic };
