@@ -1,8 +1,11 @@
+// index.js
 import express from 'express';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
-import db from './database/database.js'; // Importación corregida
+import db from './database/database.js';
 import medicRoutes from './routes/medic.routes.js';
+import appointmentRoutes from './routes/appointment.routes.js';
+import userRoutes from './routes/user.routes.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -10,17 +13,21 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.set('view engine', 'pug'); // Configura Pug como el motor de plantillas
+app.set('views', './views'); // Directorio de las vistas
+
 app.use(morgan('dev'));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/medics', medicRoutes);
+app.use('/appointments', appointmentRoutes);
+app.use('/users', userRoutes); // Usa las rutas de usuarios
 
 db.authenticate()
   .then(() => {
     console.log('Database connected');
-
-    // Sincronizar los modelos
-    return db.sync({ force: false }); // Cambia esto a true si quieres forzar la recreación de tablas
+    return db.sync({ force: false });
   })
   .then(() => {
     app.listen(PORT, () => {

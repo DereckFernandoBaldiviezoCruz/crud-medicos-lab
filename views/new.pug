@@ -1,0 +1,20 @@
+extends layout
+
+block content
+    h1 Crear Usuario
+    form(action='/users' method='POST')
+        .form-group
+            label(for='fullname') Nombre Completo
+            input.form-control(type='text' name='fullname' required)
+        .form-group
+            label(for='username') Nombre de Usuario
+            input.form-control(type='text' name='username' required)
+        .form-group
+            label(for='password') Contraseña
+            input.form-control(type='password' name='password' required)
+        .form-group
+            label(for='role') Rol
+            input.form-control(type='text' name='role' required)
+        button.btn.btn-primary(type='submit') Guardar
+        span &nbsp;&nbsp;
+        a(href='/users' class='btn btn-primary') Cancelar

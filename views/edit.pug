@@ -1,0 +1,21 @@
+extends layout
+
+block content
+    h1 Editar Usuario
+    form(action=`/users/${user.id}` method='POST')
+        .form-group
+            label(for='fullname') Nombre Completo
+            input.form-control(type='text' name='fullname' value=user.fullname required)
+        .form-group
+            label(for='username') Nombre de Usuario
+            input.form-control(type='text' name='username' value=user.username required)
+        .form-group
+            label(for='password') Contraseña
+            input.form-control(type='password' name='password' value=user.password required)
+        .form-group
+            label(for='role') Rol
+            input.form-control(type='text' name='role' value=user.role required)
+        .form-group    
+            button.btn.btn-primary(type='submit') Guardar
+            span &nbsp;&nbsp;
+            a(href='/users' class='btn btn-primary') Cancelar

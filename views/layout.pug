@@ -1,0 +1,74 @@
+doctype html
+html
+  head
+    title Sistema de Control de Colas
+    link(rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css')
+    link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css')
+    link(rel='stylesheet' href='/styles.css')
+  body
+    .d-flex
+      // Menú lateral
+      nav#sidebar.sidebar
+        .sidebar-header
+          h5 Dashboard
+        ul.list-unstyled.components
+          li
+            a(href='#adminSubmenu' data-toggle='collapse' aria-expanded='false' class='dropdown-toggle') Administrador
+            ul.collapse.list-unstyled#adminSubmenu
+              li
+                a(href='/users')
+                  i.fas.fa-users
+                  |  Usuarios
+              li
+                a(href='/login')
+                  i.fas.fa-sign-in-alt
+                  |  Login
+              li
+                a(href='/logout')
+                  i.fas.fa-sign-out-alt
+                  |  Logout
+          li
+            a(href='#medicosSubmenu' data-toggle='collapse' aria-expanded='false' class='dropdown-toggle') Médicos
+            ul.collapse.list-unstyled#medicosSubmenu
+              li
+                a(href='/medicos/llamar')
+                  i.fas.fa-bullhorn
+                  |  Llamar Paciente
+              li
+                a(href='/medicos/cancelar')
+                  i.fas.fa-times
+                  |  Cancelar
+              li
+                a(href='/medicos/editar')
+                  i.fas.fa-edit
+                  |  Editar
+          li
+            a(href='#pacientesSubmenu' data-toggle='collapse' aria-expanded='false' class='dropdown-toggle') Pacientes
+            ul.collapse.list-unstyled#pacientesSubmenu
+              li
+                a(href='/pacientes/ticket')
+                  i.fas.fa-ticket-alt 
+                  |  Emitir Ticket
+              li
+                a(href='/pacientes/cita')
+                  i.fas.fa-calendar-check
+                  |  Cita Médica
+      // Contenido principal
+      div#content
+        // Menú superior
+        nav.navbar.navbar-expand-lg.navbar-light.bg-light
+          button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarNav' aria-controls='navbarNav' aria-expanded='false' aria-label='Toggle navigation')
+            span.navbar-toggler-icon
+          .collapse.navbar-collapse#navbarNav
+            ul.navbar-nav.mr-auto
+              li.nav-item.active
+                a.nav-link(href='/') Inicio
+            form.form-inline.my-2.my-lg-0
+              input.form-control.mr-sm-2(type='search' placeholder='Buscar' aria-label='Buscar')
+              button.btn.btn-outline-success.my-2.my-sm-0(type='submit') Buscar
+        // Contenido dinámico
+        block content
+    script(src='https://code.jquery.com/jquery-3.3.1.slim.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js')
+    script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js')
+    script(src='/scripts.js')

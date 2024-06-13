@@ -1,0 +1,25 @@
+extends layout
+
+block content
+    .container
+    h1 Lista de Usuarios
+    a(href='/users/new' class='btn btn-primary mb-3') Crear nuevo usuario
+    table.table.table-striped
+        thead
+            tr
+                th ID
+                th Nombre Completo
+                th Nombre de Usuario
+                th Rol
+                th Acciones
+        tbody
+            each user in users
+                tr
+                    td #{user.id}
+                    td #{user.fullname}
+                    td #{user.username}
+                    td #{user.role}
+                    td
+                        a(href=`/users/${user.id}/edit` class='btn btn-warning btn-sm mr-2') Editar
+                        form(action=`/users/${user.id}/delete` method='POST' style='display:inline')
+                            button(type='submit' class='btn btn-danger btn-sm') Eliminar
