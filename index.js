@@ -10,11 +10,14 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.set('view engine', 'pug');  // Establece Pug como motor de plantillas
+app.set('views', './views');    // Establece el directorio de vistas
+
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/users', userRoutes);  // Asígnale el prefijo '/users' a las rutas de usuarios
+app.use('/users', userRoutes);  // Asigna el prefijo '/users' a las rutas de usuarios
 
 // Ruta para la búsqueda de usuarios
 app.get('/users/search', async (req, res) => {
