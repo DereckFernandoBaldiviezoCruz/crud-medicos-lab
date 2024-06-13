@@ -1,5 +1,6 @@
 // controllers/user.controllers.js
-import User from '../models/user.js'; // Importa el modelo de usuario
+import { Sequelize } from 'sequelize';
+import User from '../models/user.js';
 
 export async function getAllUsers(req, res) {
   try {
@@ -9,23 +10,24 @@ export async function getAllUsers(req, res) {
     res.status(500).json({ message: error.message });
   }
 }
+
 export async function searchUsers(req, res) {
-    const { query } = req.query;
-    try {
-      const users = await User.findAll({
-        where: {
-          [Sequelize.Op.or]: [
-            { fullname: { [Sequelize.Op.iLike]: `%${query}%` } },
-            { username: { [Sequelize.Op.iLike]: `%${query}%` } },
-            { role: { [Sequelize.Op.iLike]: `%${query}%` } }
-          ]
-        }
-      });
-      res.render('index_users', { users });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
+  const { query } = req.query;
+  try {
+    const users = await User.findAll({
+      where: {
+        [Sequelize.Op.or]: [
+          { fullname: { [Sequelize.Op.iLike]: `%${query}%` } },
+          { username: { [Sequelize.Op.iLike]: `%${query}%` } },
+          { role: { [Sequelize.Op.iLike]: `%${query}%` } }
+        ]
+      }
+    });
+    res.render('index_users', { users });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
+}
 
 export async function getUserById(req, res) {
   const { id } = req.params;
