@@ -14,6 +14,9 @@ export async function getUserById(req, res) {
   const { id } = req.params;
   try {
     const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
     res.render('view', { user });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -35,6 +38,9 @@ export async function updateUser(req, res) {
   const { fullname, username, password, role } = req.body;
   try {
     const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
     user.fullname = fullname;
     user.username = username;
     user.password = password;

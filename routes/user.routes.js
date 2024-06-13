@@ -10,8 +10,15 @@ router.post('/', createUser);
 router.get('/:id', getUserById);
 router.get('/:id/edit', async (req, res) => {
   const { id } = req.params;
-  const user = await User.findByPk(id);
-  res.render('edit', { user });
+  try {
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+    res.render('edit', { user });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 });
 router.post('/:id', updateUser);
 router.post('/:id/delete', deleteUser);
