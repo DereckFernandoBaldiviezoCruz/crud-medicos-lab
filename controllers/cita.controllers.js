@@ -1,5 +1,5 @@
 // controllers/appointment.controllers.js
-import { Appointment } from '../models/appointment.js';
+import { Appointment } from '../models/cita.js';
 import { Medic } from '../models/medic.js';
 import { Patient } from '../models/patient.js';
 
