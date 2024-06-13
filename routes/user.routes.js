@@ -1,6 +1,7 @@
 // routes/user.routes.js
 import { Router } from 'express';
 import { getAllUsers, getUserById, createUser, updateUser, deleteUser } from '../controllers/user.controllers.js';
+import User from '../models/user.js'; // Importa el modelo de usuario para usarlo en la ruta de edición
 
 const router = Router();
 

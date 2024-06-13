@@ -1,5 +1,5 @@
 // controllers/user.controllers.js
-import User from '../models/user.js';
+import User from '../models/user.js'; // Importa el modelo de usuario
 
 export async function getAllUsers(req, res) {
   try {
