@@ -13,9 +13,6 @@ export async function getAllUsers(req, res) {
 
 export async function searchUsers(req, res) {
     const { query } = req.query;
-    if (!query || typeof query !== 'string') {
-      return res.status(400).json({ message: 'Invalid query parameter' });
-    }
     try {
       const users = await User.findAll({
         where: {
