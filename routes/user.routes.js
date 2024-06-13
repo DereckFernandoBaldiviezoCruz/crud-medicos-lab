@@ -24,4 +24,22 @@ router.get('/:id/edit', async (req, res) => {
 router.post('/:id', updateUser);
 router.post('/:id/delete', deleteUser);
 
+router.get('/search', async (req, res) => {
+    const { query } = req.query;
+    try {
+      const users = await User.findAll({
+        where: {
+          [Sequelize.Op.or]: [
+            { fullname: { [Sequelize.Op.iLike]: `%${query}%` } },
+            { username: { [Sequelize.Op.iLike]: `%${query}%` } },
+            { role: { [Sequelize.Op.iLike]: `%${query}%` } }
+          ]
+        }
+      });
+      res.render('index_users', { users });  // Renderiza la vista index_users con los resultados de la búsqueda
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
 export default router;
