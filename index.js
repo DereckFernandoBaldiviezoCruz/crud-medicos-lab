@@ -15,9 +15,14 @@ app.use(bodyParser.json());
 
 app.use('/medics', medicRoutes);
 
-db.authenticate() // Conexión corregida
+db.authenticate()
   .then(() => {
     console.log('Database connected');
+
+    // Sincronizar los modelos
+    return db.sync({ force: false }); // Cambia esto a true si quieres forzar la recreación de tablas
+  })
+  .then(() => {
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });

@@ -1,5 +1,6 @@
+// medic.js
 import { DataTypes } from 'sequelize';
-import db from '../database/database.js'; // Importación corregida
+import db from '../database/database.js';
 
 export const Medic = db.define('Medic', {
   id: {
@@ -39,5 +40,6 @@ export const Medic = db.define('Medic', {
     defaultValue: 'activo',
   },
 }, {
+  tableName: 'Medics', // Asegúrate de que esto coincida con el nombre de la tabla en tu base de datos
   timestamps: false,
 });
