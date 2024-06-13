@@ -4,7 +4,7 @@ import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import db from './database/database.js';
 import medicRoutes from './routes/medic.routes.js';
-import appointmentRoutes from './routes/appointment.routes.js';
+import appointmentRoutes from './routes/cita.routes.js';
 import userRoutes from './routes/user.routes.js';
 import dotenv from 'dotenv';
 
@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/medics', medicRoutes);
-app.use('/appointments', appointmentRoutes);
+app.use('/citas', appointmentRoutes);
 app.use('/users', userRoutes); // Usa las rutas de usuarios
 
 db.authenticate()
