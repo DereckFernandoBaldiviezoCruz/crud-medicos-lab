@@ -1,7 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
-import { db } from './database/database.js';
+import db from './database/database.js';
 import userRoutes from './routes/user.routes.js';  // Asegúrate de importar las rutas de usuarios
 import dotenv from 'dotenv';
 
