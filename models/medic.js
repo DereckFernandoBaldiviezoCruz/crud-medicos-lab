@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import { db } from '../database/database.js';
+import db from '../database/database.js';
 
 export const Medic = db.define('Medic', { 
   id: {
