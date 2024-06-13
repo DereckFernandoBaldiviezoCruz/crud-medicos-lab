@@ -6,7 +6,7 @@ import {
   getAppointment,
   updateAppointment,
   deleteAppointment
-} from '../controllers/appointment.controllers.js';
+} from '../controllers/cita.controllers.js';
 
 const router = Router();
 
