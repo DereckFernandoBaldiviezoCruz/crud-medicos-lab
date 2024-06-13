@@ -1,7 +1,8 @@
-const { Sequelize } = require('sequelize');
+// database.js
+import { Sequelize } from 'sequelize';
 
 const db = new Sequelize('api_medic', 'dereck', 'mApgDMRQDO1xsd2TXof1rOOCOti2qsHJ', {
-  host: 'internal-db',
+  host: 'dpg-cplimjo8fa8c73aa5q60-a',  // updated host
   dialect: 'postgres',
   port: 5432,
   pool: {
@@ -11,4 +12,4 @@ const db = new Sequelize('api_medic', 'dereck', 'mApgDMRQDO1xsd2TXof1rOOCOti2qsH
   }
 });
 
-module.exports = db;
+export default db;

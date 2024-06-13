@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
-import db from '../database/database.js';
+import db from '../database/database.js'; // Importación corregida
 
-export const Medic = db.define('Medic', { 
+export const Medic = db.define('Medic', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
