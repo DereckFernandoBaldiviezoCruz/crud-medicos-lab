@@ -1,22 +1,14 @@
-import Sequelize from 'sequelize';
-import dotenv from 'dotenv';
+const { Sequelize } = require('sequelize');
 
-dotenv.config(); // Cargar variables de entorno desde .env
-
-export const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT, // Utilizar el puerto definido en las variables de entorno
-    dialect: 'postgres',
-    pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000,
-      idle: 10000,
-    },
-    logging: false,
+const db = new Sequelize('api_medic', 'dereck', 'mApgDMRQDO1xsd2TXof1rOOCOti2qsHJ', {
+  host: 'internal-db',
+  dialect: 'postgres',
+  port: 5432,
+  pool: {
+    max: 5,
+    min: 0,
+    idle: 10000
   }
-);
+});
+
+module.exports = db;

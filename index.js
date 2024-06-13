@@ -1,7 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
-import { sequelize } from './database/database.js';
+import { db } from './database/database.js'; // Update the import name
 import medicRoutes from './routes/medic.routes.js';
 import dotenv from 'dotenv';
 
@@ -15,9 +15,9 @@ app.use(bodyParser.json());
 
 app.use('/medics', medicRoutes);
 
-sequelize.sync()
+db.authenticate() // Update this line
   .then(() => {
-    console.log('Database synchronized');
+    console.log('Database connected');
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
