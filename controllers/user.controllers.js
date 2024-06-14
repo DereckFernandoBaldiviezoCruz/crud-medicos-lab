@@ -12,22 +12,22 @@ export async function getAllUsers(req, res) {
 }
 
 export async function searchUsers(req, res) {
-    const { query } = req.query;
-    try {
-      const users = await User.findAll({
-        where: {
-          [Sequelize.Op.or]: [
-            { fullname: { [Sequelize.Op.iLike]: `%${query}%` } },
-            { username: { [Sequelize.Op.iLike]: `%${query}%` } },
-            { role: { [Sequelize.Op.iLike]: `%${query}%` } }
-          ]
-        }
-      });
-      res.render('index_users', { users });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
+  const { query } = req.query;
+  try {
+    const users = await User.findAll({
+      where: {
+        [Sequelize.Op.or]: [
+          { fullname: { [Sequelize.Op.iLike]: `%${query}%` } },
+          { username: { [Sequelize.Op.iLike]: `%${query}%` } },
+          { role: { [Sequelize.Op.iLike]: `%${query}%` } }
+        ]
+      }
+    });
+    res.render('index_users', { users });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
+}
 
 export async function getUserById(req, res) {
   const { id } = req.params;
@@ -77,6 +77,6 @@ export async function deleteUser(req, res) {
     await User.destroy({ where: { id } });
     res.redirect('/users');
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status (500).json({ message: error.message });
   }
 }
