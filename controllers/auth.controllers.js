@@ -1,4 +1,6 @@
 import User from '../models/user.js';
+import Patient from '../models/patient.js'; // Importa el modelo de paciente si existe
+import Medic from '../models/medic.js';     // Importa el modelo de médico si existe
 
 // Registro de usuario
 export const register = async (req, res) => {
@@ -6,9 +8,12 @@ export const register = async (req, res) => {
   try {
     const newUser = await User.create({ fullname, username, password, role });
 
+    // Si el rol es 'patient', crea una instancia de paciente
     if (role === 'patient') {
       await Patient.create({ userId: newUser.id, medicalHistory });
-    } else if (role === 'medic') {
+    } 
+    // Si el rol es 'medic', crea una instancia de médico
+    else if (role === 'medic') {
       await Medic.create({ userId: newUser.id, speciality });
     }
 
@@ -27,20 +32,12 @@ export const login = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Autenticación simple usando sesiones
-    req.session.userId = user.id;
-    req.session.userRole = user.role;
+    // Autenticación simple usando un token o identificador
+    const token = 'token_generado'; // Puedes generar un token aquí
+    res.cookie('token', token, { httpOnly: true }); // Almacenar el token en una cookie
 
     res.json({ message: 'Login successful' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-};
-
-// Middleware de autenticación
-export const authenticate = (req, res, next) => {
-  if (!req.session.userId) {
-    return res.status(401).json({ message: 'Not authenticated' });
-  }
-  next();
 };
