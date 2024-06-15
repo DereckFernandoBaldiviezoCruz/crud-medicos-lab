@@ -1,7 +1,7 @@
 // controllers/appointment.controllers.js
-import { Appointment } from '../models/appointment.js';
-import { Medic } from '../models/medic.js';
-import { Patient } from '../models/patient.js';
+import  Appointment  from '../models/appointment.js';
+import  Medic  from '../models/medic.js';
+import  Patient  from '../models/patient.js';
 
 export async function createAppointment(req, res) {
   const { date, time, medicId, patientId } = req.body;
