@@ -1,26 +1,30 @@
+//- views/appointment_form.pug
+
 extends layout
 
 block content
-  h1 Crear Nueva Cita
-  form(action='/appointments' method='POST')
-    .form-group
-      label(for='date') Fecha
-      input.form-control(type='date' name='date' required)
-    .form-group
-      label(for='time') Hora
-      input.form-control(type='time' name='time' required)
-    .form-group
-      label(for='medicId') Médico
-      select.form-control(name='medicId' required)
-        // Aquí podrías cargar dinámicamente la lista de médicos
-        option(value='1') Médico 1
-        option(value='2') Médico 2
-        // Continúa según tus necesidades
-    .form-group
-      label(for='patientId') Paciente
-      select.form-control(name='patientId' required)
-        // Aquí podrías cargar dinámicamente la lista de pacientes
-        option(value='1') Paciente 1
-        option(value='2') Paciente 2
-        // Continúa según tus necesidades
-    button.btn.btn-primary(type='submit') Crear Cita
+  h1 Appointment Form
+
+  form(action='/appointments', method='POST')
+    label(for='date') Date:
+    input(type='date', id='date', name='date', required)
+
+    label(for='time') Time:
+    input(type='time', id='time', name='time', required)
+
+    //- Si el usuario tiene rol de paciente, mostrar el nombre del paciente actual
+    if user && user.role === 'patient'
+      label(for='patientId') Patient:
+      input(type='text', id='patientId', name='patientId', value=user.fullname, readonly)
+
+    //- Si el usuario tiene rol de médico, permitir seleccionar cualquier paciente
+    if user && user.role === 'medic'
+      label(for='patientId') Patient:
+      select(id='patientId', name='patientId', required)
+        each patient in patients
+          option(value=patient.id)= patient.fullname
+
+    //- Campo oculto para enviar el ID del médico que crea la cita
+    input(type='hidden', name='medicId', value=user.id)
+
+    button(type='submit') Create Appointment
