@@ -1,31 +1,25 @@
-// models/patient.js
 import { DataTypes } from 'sequelize';
 import db from '../database/database.js';
+import User from './user.js';
 
-export const Patient = db.define('Patient', {
-  id: {
+const Patient = db.define('Patient', {
+  userId: {
     type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  phone: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  email: {
-    type: DataTypes.STRING,
-    validate: {
-      isEmail: true,
+    references: {
+      model: User,
+      key: 'id',
     },
+    allowNull: false,
   },
-  address: {
-    type: DataTypes.STRING,
+  medicalHistory: {
+    type: DataTypes.TEXT,
     allowNull: true,
-  }
+  },
 }, {
-  timestamps: false,
+  timestamps: true,
 });
+
+User.hasOne(Patient, { foreignKey: 'userId' });
+Patient.belongsTo(User, { foreignKey: 'userId' });
+
+export default Patient;

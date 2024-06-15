@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  .container
+    h1 Registro de Usuario
+    form(action='/auth/register' method='POST')
+      .form-group
+        label(for='fullname') Nombre Completo
+        input.form-control(type='text' name='fullname' required)
+      .form-group
+        label(for='username') Nombre de Usuario
+        input.form-control(type='text' name='username' required)
+      .form-group
+        label(for='password') Contraseña
+        input.form-control(type='password' name='password' required)
+      .form-group
+        label(for='role') Rol
+        select.form-control(name='role' required)
+          option(value='admin') Administrador
+          option(value='medic') Médico
+          option(value='patient') Paciente
+      .form-group
+        label(for='speciality') Especialidad (solo para médicos)
+        input.form-control(type='text' name='speciality')
+      .form-group
+        label(for='medicalHistory') Historia Médica (solo para pacientes)
+        textarea.form-control(name='medicalHistory')
+      button.btn.btn-primary(type='submit') Registrar

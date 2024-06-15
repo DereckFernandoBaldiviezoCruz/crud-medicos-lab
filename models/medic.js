@@ -1,45 +1,25 @@
-// medic.js
 import { DataTypes } from 'sequelize';
 import db from '../database/database.js';
+import User from './user.js';
 
-export const Medic = db.define('Medic', {
-  id: {
+const Medic = db.define('Medic', {
+  userId: {
     type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  name: {
-    type: DataTypes.STRING,
+    references: {
+      model: User,
+      key: 'id',
+    },
+    allowNull: false,
   },
   speciality: {
     type: DataTypes.STRING,
-  },
-  phone: {
-    type: DataTypes.STRING,
-  },
-  email: {
-    type: DataTypes.STRING,
-    validate: {
-      isEmail: true,
-    },
-  },
-  image: {
-    type: DataTypes.STRING,
-    defaultValue: '',
-  },
-  services: {
-    type: DataTypes.STRING,
-    defaultValue: '',
-  },
-  certifications: {
-    type: DataTypes.STRING,
-    defaultValue: '',
-  },
-  state: {
-    type: DataTypes.STRING,
-    defaultValue: 'activo',
+    allowNull: false,
   },
 }, {
-  tableName: 'Medics', // Asegúrate de que esto coincida con el nombre de la tabla en tu base de datos
-  timestamps: false,
+  timestamps: true,
 });
+
+User.hasOne(Medic, { foreignKey: 'userId' });
+Medic.belongsTo(User, { foreignKey: 'userId' });
+
+export default Medic;

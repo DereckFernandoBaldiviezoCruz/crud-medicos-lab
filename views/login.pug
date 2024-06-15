@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  .container
+    h1 Iniciar Sesión
+    form(action='/auth/login' method='POST')
+      .form-group
+        label(for='username') Nombre de Usuario
+        input.form-control(type='text' name='username' required)
+      .form-group
+        label(for='password') Contraseña
+        input.form-control(type='password' name='password' required)
+      button.btn.btn-primary(type='submit') Iniciar Sesión
