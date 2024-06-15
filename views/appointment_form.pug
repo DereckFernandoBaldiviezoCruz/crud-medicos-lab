@@ -11,10 +11,10 @@ block content
     input(type='time', id='time', name='time', required)
     br
 
-    if user.role === 'patient'
+    if user && user.role === 'patient'
       input(type='hidden', id='patientId', name='patientId', value=user.id)
       p Patient: #{user.fullname} (You are a patient)
-    else if user.role === 'medic'
+    else if user && user.role === 'medic'
       label(for='patientId') Patient:
       select(id='patientId', name='patientId', required)
         each patient in patients

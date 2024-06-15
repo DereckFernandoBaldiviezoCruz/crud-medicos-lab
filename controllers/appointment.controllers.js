@@ -80,7 +80,7 @@ export async function renderAppointmentForm(req, res) {
     const { user } = req.session;
 
     let patients = [];
-    if (user.role === 'medic') {
+    if (user && user.role === 'medic') {
       patients = await Patient.findAll({ attributes: ['id', 'fullname'] });
     }
 
