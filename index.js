@@ -1,9 +1,10 @@
 import express from 'express';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
+import session from 'express-session'; // Asegúrate de tener express-session instalado
 import db from './database/database.js';
 import userRoutes from './routes/user.routes.js';
-import authRoutes from './routes/auth.routes.js';  // Importa las rutas de autenticación
+import authRoutes from './routes/auth.routes.js'; // Importa las rutas de autenticación
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -11,45 +12,51 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Configura express-session
+app.use(session({
+  secret: 'secret-key',
+  resave: false,
+  saveUninitialized: false,
+}));
+
 app.set('view engine', 'pug');
 app.set('views', './views');
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public')); // Reemplaza 'public' con el nombre de tu carpeta de archivos estáticos si es diferente
-
 
 app.use('/users', userRoutes);
-app.use('/auth', authRoutes);  // Asigna el prefijo '/auth' a las rutas de autenticación
+app.use('/auth', authRoutes); // Asigna el prefijo '/auth' a las rutas de autenticación
 
-// Ruta para la página de inicio
-app.get('/', (req, res) => {
-  res.render('index');  // Renderiza la vista 'index.pug'
-});
-
-// Ruta para la página de login
-app.get('/login', (req, res) => {
-  res.render('login');  // Renderiza la vista 'login.pug'
-});
-
-// Ruta para la búsqueda de usuarios
-app.get('/users/search', async (req, res) => {
-  const { query } = req.query;
-  try {
-    const users = await User.findAll({
-      where: {
-        [Sequelize.Op.or]: [
-          { fullname: { [Sequelize.Op.iLike]: `%${query}%` } },
-          { username: { [Sequelize.Op.iLike]: `%${query}%` } },
-          { role: { [Sequelize.Op.iLike]: `%${query}%` } }
-        ]
-      }
-    });
-    res.render('index_users', { users });  // Renderiza la vista 'index_users.pug' con los resultados de la búsqueda
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+// Middleware para verificar la sesión del usuario
+const requireLogin = (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect('/login'); // Redirige al login si no hay sesión de usuario
   }
+  next();
+};
+
+// Ruta principal
+app.get('/', (req, res) => {
+  // Renderiza el index.pug con las opciones según el rol del usuario
+  const { user } = req.session;
+  if (user) {
+    if (user.role === 'admin') {
+      res.render('index_admin');
+    } else if (user.role === 'patient') {
+      res.render('index_patient');
+    } else if (user.role === 'medic') {
+      res.render('index_medic');
+    }
+  } else {
+    res.redirect('/login'); // Si no está autenticado, redirige al login
+  }
+});
+
+// Ruta para el login
+app.get('/login', (req, res) => {
+  res.render('login'); // Renderiza la vista de login
 });
 
 // Conexión a la base de datos y arranque del servidor
