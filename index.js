@@ -1,6 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
+import session from 'express-session';
 import db from './database/database.js';
 import userRoutes from './routes/user.routes.js';
 import authRoutes from './routes/auth.routes.js';
@@ -17,6 +18,11 @@ app.set('views', './views');
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({
+  secret: 'yourSecretKey',
+  resave: false,
+  saveUninitialized: true,
+}));
 
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);

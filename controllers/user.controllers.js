@@ -1,5 +1,4 @@
 import { Sequelize } from 'sequelize';
-import bcrypt from 'bcrypt';
 import User from '../models/user.js';
 import Patient from '../models/patient.js';
 import Medic from '../models/medic.js';
@@ -47,8 +46,7 @@ export async function getUserById(req, res) {
 export async function createUser(req, res) {
   const { fullname, username, password, role, speciality, medicalHistory } = req.body;
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ fullname, username, password: hashedPassword, role });
+    const newUser = await User.create({ fullname, username, password, role });
 
     if (role === 'patient') {
       await Patient.create({ userId: newUser.id, medicalHistory });
