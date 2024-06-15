@@ -1,25 +1,20 @@
-// routes/appointment.routes.js
 import { Router } from 'express';
 import {
+  getAllAppointments,
+  getAppointmentById,
   createAppointment,
-  getAppointments,
-  getAppointment,
+  renderAppointmentForm,
   updateAppointment,
   deleteAppointment,
-  renderAppointmentForm
 } from '../controllers/appointment.controllers.js';
 
 const router = Router();
 
-// Rutas CRUD para citas
+router.get('/', getAllAppointments);
 router.get('/new', renderAppointmentForm);
 router.post('/', createAppointment);
-router.get('/', getAppointments);
-router.get('/new', (req, res) => {
-  res.render('appointment_form'); // Renderiza el formulario de creación de cita
-});
-router.get('/:id', getAppointment);
-router.put('/:id', updateAppointment);
-router.delete('/:id', deleteAppointment);
+router.get('/:id', getAppointmentById);
+router.post('/:id', updateAppointment);
+router.post('/:id/delete', deleteAppointment);
 
 export default router;

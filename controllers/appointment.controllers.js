@@ -1,56 +1,72 @@
-// controllers/appointment.controllers.js
-import  Appointment  from '../models/appointment.js';
-import  Medic  from '../models/medic.js';
-import  Patient  from '../models/patient.js';
+import Appointment from '../models/appointment.js';
+import Medic from '../models/medic.js';
+import Patient from '../models/patient.js';
 import User from '../models/user.js';
+
+export async function getAllAppointments(req, res) {
+  try {
+    const appointments = await Appointment.findAll();
+    res.render('index_appointments', { appointments });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+export async function getAppointmentById(req, res) {
+  const { id } = req.params;
+  try {
+    const appointment = await Appointment.findByPk(id, {
+      include: [
+        { model: Medic, include: [{ model: User, attributes: ['fullname'] }] },
+        { model: Patient, include: [{ model: User, attributes: ['fullname'] }] },
+      ],
+    });
+    if (!appointment) {
+      return res.status(404).send('Appointment not found');
+    }
+    res.render('view_appointment', { appointment });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
 
 export async function createAppointment(req, res) {
   const { date, time, medicId, patientId } = req.body;
   try {
-    const { user } = req.session;
-
-    // Determinar los IDs de médico y paciente según el rol del usuario
-    const finalPatientId = user.role === 'patient' ? user.id : patientId;
-    const finalMedicId = user.role === 'medic' ? user.id : medicId;
-
     const newAppointment = await Appointment.create({
       date,
       time,
-      medicId: finalMedicId,
-      patientId: finalPatientId,
+      medicId,
+      patientId,
     });
 
-    res.json(newAppointment);
+    res.redirect('/appointments');
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 }
 
-export async function getAppointments(req, res) {
+export async function renderAppointmentForm(req, res) {
   try {
-    const appointments = await Appointment.findAll({
-      include: [
-        { model: Medic, attributes: ['name', 'speciality'] },
-        { model: Patient, attributes: ['name', 'phone'] },
-      ],
-    });
-    res.json(appointments);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
+    const { user } = req.session;
 
-export async function getAppointment(req, res) {
-  const { id } = req.params;
-  try {
-    const appointment = await Appointment.findOne({
-      where: { id },
-      include: [
-        { model: Medic, attributes: ['name', 'speciality'] },
-        { model: Patient, attributes: ['name', 'phone'] },
-      ],
-    });
-    res.json(appointment);
+    if (!user) {
+      return res.redirect('/login');
+    }
+
+    if (user.role === 'patient') {
+      res.render('appointment_form', { user });
+    } else if (user.role === 'medic') {
+      const patients = await Patient.findAll({
+        include: [{ model: User, attributes: ['fullname'] }],
+      });
+      res.render('appointment_form', { user, patients });
+    } else {
+      const medics = await Medic.findAll({
+        include: [{ model: User, attributes: ['fullname'] }],
+      });
+      res.render('appointment_form', { user, medics });
+    }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -58,17 +74,16 @@ export async function getAppointment(req, res) {
 
 export async function updateAppointment(req, res) {
   const { id } = req.params;
-  const { date, time, status } = req.body;
+  const { date, time } = req.body;
   try {
     const appointment = await Appointment.findByPk(id);
-    if (!appointment) return res.status(404).json({ message: 'Cita no encontrada' });
-
+    if (!appointment) {
+      return res.status(404).send('Appointment not found');
+    }
     appointment.date = date;
     appointment.time = time;
-    appointment.status = status;
     await appointment.save();
-
-    res.json(appointment);
+    res.redirect('/appointments');
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -78,29 +93,7 @@ export async function deleteAppointment(req, res) {
   const { id } = req.params;
   try {
     await Appointment.destroy({ where: { id } });
-    res.sendStatus(204);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
-export async function renderAppointmentForm(req, res) {
-  try {
-    const { user } = req.session;
-
-    if (!user) {
-      return res.redirect('/login');
-    }
-
-    // Obtener la lista de médicos y pacientes
-    const patients = await Patient.findAll({
-      include: [{ model: User, attributes: ['fullname'] }]
-    });
-
-    const medics = await Medic.findAll({
-      include: [{ model: User, attributes: ['fullname'] }]
-    });
-
-    res.render('appointment_form', { user, patients, medics });
+    res.redirect('/appointments');
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

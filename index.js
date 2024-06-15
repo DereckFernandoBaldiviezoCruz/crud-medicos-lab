@@ -6,7 +6,7 @@ import session from 'express-session';
 import db from './database/database.js';
 import userRoutes from './routes/user.routes.js';
 import authRoutes from './routes/auth.routes.js';
-import appointmentRoutes from './routes/appointment.routes.js'; // Importa las rutas de citas
+import appointmentRoutes from './routes/appointment.routes.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -30,15 +30,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/users', userRoutes);
 app.use('/auth', authRoutes);
-app.use('/appointments', appointmentRoutes); // Monta las rutas de citas
-// Configuración de archivos estáticos
-app.use(express.static('public'));
+app.use('/appointments', appointmentRoutes);
 
+app.use(express.static('public'));
 
 // Middleware para verificar la sesión del usuario
 const requireLogin = (req, res, next) => {
   if (!req.session.user) {
-    return res.redirect('/login'); // Redirige al login si no hay sesión de usuario
+    return res.redirect('/login');
   }
   next();
 };
@@ -55,33 +54,27 @@ app.get('/', (req, res) => {
       res.redirect('/medic');
     }
   } else {
-    res.redirect('/login'); // Si no está autenticado, redirige al login
+    res.redirect('/login');
   }
 });
 
 // Rutas específicas para cada rol
 app.get('/admin', requireLogin, (req, res) => {
-  res.render('index_admin'); // Renderiza la vista para admin
+  res.render('index_admin');
 });
 
 app.get('/patient', requireLogin, (req, res) => {
-  res.render('index_patient'); // Renderiza la vista para paciente
+  res.render('index_patient');
 });
 
 app.get('/medic', requireLogin, (req, res) => {
-  res.render('index_medic'); // Renderiza la vista para médico
+  res.render('index_medic');
 });
 
 app.get('/login', (req, res) => {
-  res.render('login'); // Renderiza la vista de login
+  res.render('login');
 });
-db.sync({ alter: true })
-  .then(() => {
-    console.log('Database synchronized');
-  })
-  .catch((error) => {
-    console.error('Unable to synchronize the database:', error);
-  });
+
 // Conexión a la base de datos y arranque del servidor
 db.authenticate()
   .then(() => {
