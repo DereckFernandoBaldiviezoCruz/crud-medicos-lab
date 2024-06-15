@@ -1,103 +1,88 @@
 import express from 'express';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
-import session from 'express-session'; // Importa express-session para manejar sesiones
-import { Sequelize } from 'sequelize';
-import dotenv from 'dotenv';
-
-// Importa las rutas de tu aplicación
+import session from 'express-session';
+import db from './database/database.js';
 import userRoutes from './routes/user.routes.js';
-import authRoutes from './routes/auth.routes.js';
+import authRoutes from './routes/auth.routes.js'; // Importa las rutas de autenticación
+import dotenv from 'dotenv';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configura Sequelize para la conexión a PostgreSQL
-const sequelize = new Sequelize({
-  dialect: 'postgres',
-  host: process.env.DB_HOST,       // Puedes cambiar por tu host de base de datos
-  port: process.env.DB_PORT,       // Puedes cambiar por tu puerto de base de datos
-  username: process.env.DB_USER,   // Puedes cambiar por tu usuario de base de datos
-  password: process.env.DB_PASS,   // Puedes cambiar por tu contraseña de base de datos
-  database: process.env.DB_NAME,   // Puedes cambiar por tu nombre de base de datos
-  dialectOptions: {
-    ssl: {
-      rejectUnauthorized: false   // Opciones adicionales para conexiones SSL
-    }
-  }
-});
-
-// Middleware para logs de peticiones
-app.use(morgan('dev'));
-
-// Middleware para procesar bodies JSON y URL-encoded
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-// Middleware para manejar sesiones con express-session
+// Configura express-session
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: 'secret-key',
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
 }));
 
-// Establece el motor de vistas y la carpeta de vistas
 app.set('view engine', 'pug');
 app.set('views', './views');
 
-// Rutas de la aplicación
-app.use('/users', userRoutes);   // Rutas para usuarios
-app.use('/auth', authRoutes);    // Rutas para autenticación
+app.use(morgan('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-// Ruta para la página de inicio
+app.use('/users', userRoutes);
+app.use('/auth', authRoutes); // Asigna el prefijo '/auth' a las rutas de autenticación
+
+// Middleware para verificar la sesión del usuario
+const requireLogin = (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect('/login'); // Redirige al login si no hay sesión de usuario
+  }
+  next();
+};
+
+// Ruta principal
 app.get('/', (req, res) => {
-  // Verifica el usuario autenticado y su rol
-  const user = req.session.user;
+  // Renderiza el index.pug con las opciones según el rol del usuario
+  const { user } = req.session;
   if (user) {
     if (user.role === 'admin') {
-      // Redirige a la página de administrador si es admin
       res.redirect('/admin');
     } else if (user.role === 'patient') {
-      // Redirige a la página de paciente si es paciente
       res.redirect('/patient');
     } else if (user.role === 'medic') {
-      // Redirige a la página de médico si es médico
       res.redirect('/medic');
     }
   } else {
-    // Redirige al login si no hay usuario autenticado
-    res.redirect('/login');
+    res.redirect('/login'); // Si no está autenticado, redirige al login
   }
 });
 
-// Ruta para la página de login
-app.get('/login', (req, res) => {
-  // Renderiza la vista de login
-  res.render('login');
+// Rutas para roles específicos
+
+// Ruta para el administrador
+app.get('/admin', requireLogin, (req, res) => {
+  // Aquí renderiza el index_admin.pug o una vista similar para el administrador
+  res.render('index_admin');
 });
 
-// Ruta para cerrar sesión
-app.get('/logout', (req, res) => {
-  // Destruye la sesión y redirige al login
-  req.session.destroy(err => {
-    if (err) {
-      console.error('Error al cerrar sesión:', err);
-    }
-    res.redirect('/login');
-  });
+// Ruta para el paciente
+app.get('/patient', requireLogin, (req, res) => {
+  // Aquí renderiza el index_patient.pug o una vista similar para el paciente
+  res.render('index_patient');
+});
+
+// Ruta para el médico
+app.get('/medic', requireLogin, (req, res) => {
+  // Aquí renderiza el index_medic.pug o una vista similar para el médico
+  res.render('index_medic');
+});
+
+// Ruta para el login
+app.get('/login', (req, res) => {
+  res.render('login'); // Renderiza la vista de login
 });
 
 // Conexión a la base de datos y arranque del servidor
-sequelize.authenticate()
+db.authenticate()
   .then(() => {
     console.log('Database connected');
-
-    // Sincroniza los modelos con la base de datos (opcional, según tus necesidades)
-     sequelize.sync();
-
-    // Inicia el servidor
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
