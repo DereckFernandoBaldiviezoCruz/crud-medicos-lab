@@ -15,6 +15,12 @@ block content
       input(type='hidden', id='patientId', name='patientId', value=user.id)
       p Patient: #{user.fullname} (You are a patient)
     else if user && user.role === 'medic'
+      label(for='medicId') Medic:
+      select(id='medicId', name='medicId', required)
+        each medic in medics
+          option(value=medic.id)= medic.fullname
+      br
+
       label(for='patientId') Patient:
       select(id='patientId', name='patientId', required)
         each patient in patients

@@ -6,12 +6,28 @@ import  Patient  from '../models/patient.js';
 export async function createAppointment(req, res) {
   const { date, time, medicId, patientId } = req.body;
   try {
+    // Verifica el rol del usuario
+    const { user } = req.session;
+
+    // Si el usuario es paciente, asigna su propio id como patientId
+    if (user.role === 'patient') {
+      const newAppointment = await Appointment.create({
+        date,
+        time,
+        medicId,
+        patientId: user.id, // Asigna el id del paciente
+      });
+      return res.json(newAppointment);
+    }
+
+    // Si el usuario es médico, usa el medicId y patientId proporcionados en el formulario
     const newAppointment = await Appointment.create({
       date,
       time,
       medicId,
       patientId,
     });
+
     res.json(newAppointment);
   } catch (error) {
     res.status(500).json({ message: error.message });
