@@ -1,5 +1,5 @@
 // controllers/appointment.controllers.js
-import { Appointment } from '../models/cita.js';
+import { Appointment } from '../models/appointment.js';
 import { Medic } from '../models/medic.js';
 import { Patient } from '../models/patient.js';
 
@@ -53,7 +53,7 @@ export async function updateAppointment(req, res) {
   const { date, time, status } = req.body;
   try {
     const appointment = await Appointment.findByPk(id);
-    if (!appointment) return res.status(404).json({ message: 'Appointment not found' });
+    if (!appointment) return res.status(404).json({ message: 'Cita no encontrada' });
 
     appointment.date = date;
     appointment.time = time;

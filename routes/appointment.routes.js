@@ -10,6 +10,7 @@ import {
 
 const router = Router();
 
+// Rutas CRUD para citas
 router.post('/', createAppointment);
 router.get('/', getAppointments);
 router.get('/new', (req, res) => {
