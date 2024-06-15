@@ -11,8 +11,7 @@ import {
 const router = Router();
 
 router.get('/', getAllAppointments);
-router.get('/new', renderAppointmentForm);
-router.post('/', createAppointment);
+router.get('/new', (req, res) => res.render('new'));
 router.get('/:id', getAppointmentById);
 router.post('/:id', updateAppointment);
 router.post('/:id/delete', deleteAppointment);
