@@ -95,12 +95,23 @@ export async function renderAppointmentForm(req, res) {
   try {
     const { user } = req.session;
 
+    // Verificar si el usuario está definido
+    if (!user) {
+      return res.redirect('/login');
+    }
+
     let patients = [];
-    if (user && user.role === 'medic') {
+    let medics = [];
+
+    // Obtener lista de pacientes si el usuario es un médico
+    if (user.role === 'medic') {
       patients = await Patient.findAll({ attributes: ['id', 'fullname'] });
     }
 
-    res.render('appointment_form', { user, patients });
+    // Obtener lista de médicos
+    medics = await Medic.findAll({ attributes: ['id', 'fullname'] });
+
+    res.render('appointment_form', { user, patients, medics });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
