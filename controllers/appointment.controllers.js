@@ -9,9 +9,8 @@ export async function createAppointment(req, res) {
   try {
     const { user } = req.session;
 
-    // Si el usuario es paciente, usamos su ID
+    // Determinar los IDs de médico y paciente según el rol del usuario
     const finalPatientId = user.role === 'patient' ? user.id : patientId;
-    // Si el usuario es médico, usamos su ID
     const finalMedicId = user.role === 'medic' ? user.id : medicId;
 
     const newAppointment = await Appointment.create({
@@ -92,19 +91,13 @@ export async function renderAppointmentForm(req, res) {
       return res.redirect('/login');
     }
 
-    let patients = [];
-    let medics = [];
+    // Obtener la lista de médicos y pacientes
+    const patients = await Patient.findAll({
+      attributes: ['userId'],
+      include: [{ model: User, attributes: ['fullname'] }]
+    });
 
-    // Obtener la lista de pacientes si el usuario es médico
-    if (user.role === 'medic') {
-      patients = await Patient.findAll({
-        attributes: ['id'],
-        include: [{ model: User, attributes: ['fullname'] }]
-      });
-    }
-
-    // Obtener la lista de médicos con la información del usuario
-    medics = await Medic.findAll({
+    const medics = await Medic.findAll({
       attributes: ['userId'],
       include: [{ model: User, attributes: ['fullname'] }]
     });
