@@ -5,12 +5,14 @@ import {
   getAppointments,
   getAppointment,
   updateAppointment,
-  deleteAppointment
+  deleteAppointment,
+  renderAppointmentForm
 } from '../controllers/appointment.controllers.js';
 
 const router = Router();
 
 // Rutas CRUD para citas
+router.get('/new', renderAppointmentForm);
 router.post('/', createAppointment);
 router.get('/', getAppointments);
 router.get('/new', (req, res) => {
