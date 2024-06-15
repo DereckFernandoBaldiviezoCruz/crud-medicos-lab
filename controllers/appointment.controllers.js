@@ -93,12 +93,10 @@ export async function renderAppointmentForm(req, res) {
 
     // Obtener la lista de médicos y pacientes
     const patients = await Patient.findAll({
-      attributes: ['userId'],
       include: [{ model: User, attributes: ['fullname'] }]
     });
 
     const medics = await Medic.findAll({
-      attributes: ['userId'],
       include: [{ model: User, attributes: ['fullname'] }]
     });
 
