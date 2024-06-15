@@ -31,6 +31,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/users', userRoutes);
 app.use('/auth', authRoutes);
 app.use('/appointments', appointmentRoutes); // Monta las rutas de citas
+// Configuración de archivos estáticos
+app.use(express.static('public'));
+
 
 // Middleware para verificar la sesión del usuario
 const requireLogin = (req, res, next) => {
