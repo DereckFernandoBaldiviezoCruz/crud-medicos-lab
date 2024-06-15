@@ -2,29 +2,48 @@ extends layout
 
 block content
   h1 Appointment Form
-  form(action='/appointments', method='POST')
-    label(for='date') Date:
-    input(type='date', id='date', name='date', required)
-    br
-
-    label(for='time') Time:
-    input(type='time', id='time', name='time', required)
-    br
-
-    if user && user.role === 'patient'
-      input(type='hidden', id='patientId', name='patientId', value=user.id)
-      p Patient: #{user.fullname} (You are a patient)
-      label(for='medicId') Medic:
-      select(id='medicId', name='medicId', required)
-        each medic in medics
-          option(value=medic.userId)= medic.User.fullname
-    else if user && user.role === 'medic'
-      input(type='hidden', id='medicId', name='medicId', value=user.id)
-      p Medic: #{user.fullname} (You are a medic)
-      label(for='patientId') Patient:
-      select(id='patientId', name='patientId', required)
-        each patient in patients
-          option(value=patient.userId)= patient.User.fullname
-    br
-
-    input(type='submit', value='Schedule Appointment')
+  /form(action='/appointments', method='POST')
+  /  label(for='date') Date:
+  /  input(type='date', id='date', name='date', required)
+  /  br
+/
+  /  label(for='time') Time:
+  /  input(type='time', id='time', name='time', required)
+  /  br
+/
+  /  if user && user.role === 'patient'
+  /    input(type='hidden', id='patientId', name='patientId', value=user.id)
+  /    p Patient: #{user.fullname} (You are a patient)
+  /    label(for='medicId') Medic:
+  /    select(id='medicId', name='medicId', required)
+  /      each medic in medics
+  /        option(value=medic.userId)= medic.User.fullname
+  /  else if user && user.role === 'medic'
+  /    input(type='hidden', id='medicId', name='medicId', value=user.id)
+  /    p Medic: #{user.fullname} (You are a medic)
+  /    label(for='patientId') Patient:
+  /    select(id='patientId', name='patientId', required)
+  /      each patient in patients
+  /        option(value=patient.userId)= patient.User.fullname
+  /  br
+/
+  /  input(type='submit', value='Schedule Appointment')//
+    table.table.table-striped
+            thead
+                tr
+                    th ID
+                    th Nombre Completo
+                    th Nombre de Usuario
+                    th Rol
+                    th Acciones
+            tbody
+                each user in users
+                    tr
+                        td #{user.id}
+                        td #{user.fullname}
+                        td #{user.username}
+                        td #{user.role}
+                        td
+                            a(href=`/users/${user.id}/edit` class='btn btn-warning btn-sm mr-2') Editar
+                            form(action=`/users/${user.id}/delete` method='POST' style='display:inline')
+                                button(type='submit' class='btn btn-danger btn-sm') Eliminar
