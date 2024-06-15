@@ -9,15 +9,15 @@ export const login = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Guarda el usuario en la sesión
-    req.session.user = user;
-
     // Redirecciona según el rol del usuario
     if (user.role === 'admin') {
+      res.cookie('userId', user.id); // Establece la cookie 'userId' con el ID del usuario
       res.redirect('/admin');
     } else if (user.role === 'patient') {
+      res.cookie('userId', user.id); // Establece la cookie 'userId' con el ID del usuario
       res.redirect('/patient');
     } else if (user.role === 'medic') {
+      res.cookie('userId', user.id); // Establece la cookie 'userId' con el ID del usuario
       res.redirect('/medic');
     }
   } catch (error) {
