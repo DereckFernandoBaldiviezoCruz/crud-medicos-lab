@@ -1,30 +1,24 @@
-//- views/appointment_form.pug
-
 extends layout
 
 block content
   h1 Appointment Form
-
   form(action='/appointments', method='POST')
     label(for='date') Date:
     input(type='date', id='date', name='date', required)
+    br
 
     label(for='time') Time:
     input(type='time', id='time', name='time', required)
+    br
 
-    //- Si el usuario tiene rol de paciente, mostrar el nombre del paciente actual
-    if user && user.role === 'patient'
-      label(for='patientId') Patient:
-      input(type='text', id='patientId', name='patientId', value=user.fullname, readonly)
-
-    //- Si el usuario tiene rol de médico, permitir seleccionar cualquier paciente
-    if user && user.role === 'medic'
+    if user.role === 'patient'
+      input(type='hidden', id='patientId', name='patientId', value=user.id)
+      p Patient: #{user.fullname} (You are a patient)
+    else if user.role === 'medic'
       label(for='patientId') Patient:
       select(id='patientId', name='patientId', required)
         each patient in patients
           option(value=patient.id)= patient.fullname
+    br
 
-    //- Campo oculto para enviar el ID del médico que crea la cita
-    input(type='hidden', name='medicId', value=user.id)
-
-    button(type='submit') Create Appointment
+    input(type='submit', value='Schedule Appointment')

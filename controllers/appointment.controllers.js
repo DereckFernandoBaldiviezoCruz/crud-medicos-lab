@@ -75,3 +75,17 @@ export async function deleteAppointment(req, res) {
     res.status(500).json({ message: error.message });
   }
 }
+export async function renderAppointmentForm(req, res) {
+  try {
+    const { user } = req.session;
+
+    let patients = [];
+    if (user.role === 'medic') {
+      patients = await Patient.findAll({ attributes: ['id', 'fullname'] });
+    }
+
+    res.render('appointment_form', { user, patients });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
