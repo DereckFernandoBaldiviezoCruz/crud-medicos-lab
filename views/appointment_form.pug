@@ -1,0 +1,27 @@
+// views/appointment_form.pug
+extends layout
+
+block content
+  h1 Crear Nueva Cita
+  form(action='/appointments' method='POST')
+    .form-group
+      label(for='date') Fecha
+      input.form-control(type='date' name='date' required)
+    .form-group
+      label(for='time') Hora
+      input.form-control(type='time' name='time' required)
+    .form-group
+      label(for='medicId') Médico
+      select.form-control(name='medicId' required)
+        // Aquí podrías cargar dinámicamente la lista de médicos
+        option(value='1') Médico 1
+        option(value='2') Médico 2
+        // Continúa según tus necesidades
+    .form-group
+      label(for='patientId') Paciente
+      select.form-control(name='patientId' required)
+        // Aquí podrías cargar dinámicamente la lista de pacientes
+        option(value='1') Paciente 1
+        option(value='2') Paciente 2
+        // Continúa según tus necesidades
+    button.btn.btn-primary(type='submit') Crear Cita
