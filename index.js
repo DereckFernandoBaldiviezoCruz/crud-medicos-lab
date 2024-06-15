@@ -1,7 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
-import session from 'express-session'; // Asegúrate de tener express-session instalado
+import session from 'express-session';
 import db from './database/database.js';
 import userRoutes from './routes/user.routes.js';
 import authRoutes from './routes/auth.routes.js'; // Importa las rutas de autenticación
@@ -43,15 +43,35 @@ app.get('/', (req, res) => {
   const { user } = req.session;
   if (user) {
     if (user.role === 'admin') {
-      res.render('index_admin');
+      res.redirect('/admin');
     } else if (user.role === 'patient') {
-      res.render('index_patient');
+      res.redirect('/patient');
     } else if (user.role === 'medic') {
-      res.render('index_medic');
+      res.redirect('/medic');
     }
   } else {
     res.redirect('/login'); // Si no está autenticado, redirige al login
   }
+});
+
+// Rutas para roles específicos
+
+// Ruta para el administrador
+app.get('/admin', requireLogin, (req, res) => {
+  // Aquí renderiza el index_admin.pug o una vista similar para el administrador
+  res.render('index_admin');
+});
+
+// Ruta para el paciente
+app.get('/patient', requireLogin, (req, res) => {
+  // Aquí renderiza el index_patient.pug o una vista similar para el paciente
+  res.render('index_patient');
+});
+
+// Ruta para el médico
+app.get('/medic', requireLogin, (req, res) => {
+  // Aquí renderiza el index_medic.pug o una vista similar para el médico
+  res.render('index_medic');
 });
 
 // Ruta para el login
