@@ -1,8 +1,8 @@
 // models/appointment.js
 import { DataTypes } from 'sequelize';
 import db from '../database/database.js';
-import { Medic } from './medic.js';
-import { Patient } from './patient.js';
+import  Medic  from './medic.js';
+import  Patient  from './patient.js';
 
 export const Appointment = db.define('Appointment', {
   id: {
