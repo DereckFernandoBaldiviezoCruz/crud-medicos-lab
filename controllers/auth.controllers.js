@@ -9,17 +9,11 @@ export const login = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Redirecciona según el rol del usuario
-    if (user.role === 'admin') {
-      res.cookie('userId', user.id); // Establece la cookie 'userId' con el ID del usuario
-      res.redirect('/admin');
-    } else if (user.role === 'patient') {
-      res.cookie('userId', user.id); // Establece la cookie 'userId' con el ID del usuario
-      res.redirect('/patient');
-    } else if (user.role === 'medic') {
-      res.cookie('userId', user.id); // Establece la cookie 'userId' con el ID del usuario
-      res.redirect('/medic');
-    }
+    // Guarda el usuario en la sesión
+    req.session.user = user;
+
+    // Envía una respuesta de éxito indicando el rol del usuario
+    res.json({ role: user.role });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
