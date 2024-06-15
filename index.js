@@ -75,7 +75,13 @@ app.get('/medic', requireLogin, (req, res) => {
 app.get('/login', (req, res) => {
   res.render('login'); // Renderiza la vista de login
 });
-
+db.sync({ alter: true })
+  .then(() => {
+    console.log('Database synchronized');
+  })
+  .catch((error) => {
+    console.error('Unable to synchronize the database:', error);
+  });
 // Conexión a la base de datos y arranque del servidor
 db.authenticate()
   .then(() => {
