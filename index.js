@@ -17,6 +17,8 @@ app.set('views', './views');
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public')); // Reemplaza 'public' con el nombre de tu carpeta de archivos estáticos si es diferente
+
 
 app.use('/users', userRoutes);
 app.use('/auth', authRoutes);  // Asigna el prefijo '/auth' a las rutas de autenticación
