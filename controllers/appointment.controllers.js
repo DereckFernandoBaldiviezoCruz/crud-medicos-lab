@@ -2,6 +2,7 @@
 import  Appointment  from '../models/appointment.js';
 import  Medic  from '../models/medic.js';
 import  Patient  from '../models/patient.js';
+import User from '../models/user.js';
 
 export async function createAppointment(req, res) {
   const { date, time, medicId, patientId } = req.body;
@@ -104,7 +105,7 @@ export async function renderAppointmentForm(req, res) {
 
     // Obtener la lista de médicos con la información del usuario
     medics = await Medic.findAll({
-      attributes: ['id', 'userId'],
+      attributes: ['userId'],
       include: [{ model: User, attributes: ['fullname'] }]
     });
 
