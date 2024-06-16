@@ -1,8 +1,8 @@
+// index.js
 import express from 'express';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import session from 'express-session';
-import pgSession from 'connect-pg-simple';
 import db from './database/database.js';
 import userRoutes from './routes/user.routes.js';
 import authRoutes from './routes/auth.routes.js';
@@ -14,15 +14,8 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configura express-session con connect-pg-simple
-const pgSessionStore = pgSession(session);
-
+// Configura express-session
 app.use(session({
-  store: new pgSessionStore({
-    conObject: {
-      connectionString: process.env.DATABASE_URL,
-    },
-  }),
   secret: 'secret-key',
   resave: false,
   saveUninitialized: false,
