@@ -47,26 +47,24 @@ export async function createAppointment(req, res) {
 }
 
 export async function renderAppointmentForm(req, res) {
-  
   try {
     const { user } = req.session;
-    console.log(user.id);
     if (!user) {
       return res.redirect('/login');
     }
 
     if (user.role === 'patient') {
-      res.render('appointment_form', { user });
+      const medics = await Medic.findAll({
+        include: [{ model: User, attributes: ['fullname'] }],
+      });
+      res.render('appointment_form', { user, medics });
     } else if (user.role === 'medic') {
       const patients = await Patient.findAll({
         include: [{ model: User, attributes: ['fullname'] }],
       });
       res.render('appointment_form', { user, patients });
     } else {
-      const medics = await Medic.findAll({
-        include: [{ model: User, attributes: ['fullname'] }],
-      });
-      res.render('appointment_form', { user, medics });
+      return res.status(403).send('Unauthorized role');
     }
   } catch (error) {
     res.status(500).json({ message: error.message });

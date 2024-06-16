@@ -17,14 +17,14 @@ block content
       label(for='medicId') Medic:
       select(id='medicId', name='medicId', required)
         each medic in medics
-          option(value=medic.userId)= medic.User.fullname
+          option(value=medic.id)= medic.User.fullname
     else if user && user.role === 'medic'
       input(type='hidden', id='medicId', name='medicId', value=user.id)
       p Medic: #{user.fullname} (You are a medic)
       label(for='patientId') Patient:
       select(id='patientId', name='patientId', required)
         each patient in patients
-          option(value=patient.userId)= patient.User.fullname
+          option(value=patient.id)= patient.User.fullname
     br
 
     input(type='submit', value='Schedule Appointment')
