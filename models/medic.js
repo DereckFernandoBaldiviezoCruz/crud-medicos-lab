@@ -1,31 +1,32 @@
-import { DataTypes } from 'sequelize';
-import db from '../database/database.js';
-import User from './user.js'; // Importa el modelo User
+import { DataTypes, Model } from 'sequelize';
+import sequelize from '../database/database.js';
+import User from './user.js'; // Importa el modelo User si es necesario
 
-const Medic = db.define('Medic', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  userId: { // Asegúrate de que userId está definido aquí
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: User,
-      key: 'id',
+class Medic extends Model {}
+
+Medic.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: true, // Esto depende de tu diseño de base de datos
+    },
+    speciality: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
   },
-  speciality: {
-    type: DataTypes.STRING,
-    allowNull: false,
+  {
+    sequelize,
+    modelName: 'Medic',
   }
-}, {
-  timestamps: true,
-});
+);
 
-// Define la relación entre Medic y User
-Medic.belongsTo(User, { foreignKey: 'userId' });
-User.hasOne(Medic, { foreignKey: 'userId' });
+Medic.belongsTo(User, { foreignKey: 'userId' }); // Define la relación con User si es necesario
 
 export default Medic;

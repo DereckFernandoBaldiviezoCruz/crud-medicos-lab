@@ -38,6 +38,10 @@ app.get('/login', (req, res) => {
 db.authenticate()
   .then(() => {
     console.log('Database connected');
+    return db.sync(); // Sincroniza los modelos con la base de datos
+  })
+  .then(() => {
+    console.log('Models synchronized');
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
