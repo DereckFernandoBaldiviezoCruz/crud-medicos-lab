@@ -47,10 +47,8 @@ export async function createAppointment(req, res) {
 }
 
 export async function renderAppointmentForm(req, res) {
-  
   try {
     const { user } = req.session;
-    console.log(user.id);
     if (!user) {
       return res.redirect('/login');
     }
