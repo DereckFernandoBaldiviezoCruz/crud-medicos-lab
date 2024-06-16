@@ -7,9 +7,9 @@ import {
   updateAppointment,
   deleteAppointment,
 } from '../controllers/appointment.controllers.js';
+import Medic from '../models/medic.js';
+import Patient from '../models/patient.js';
 import User from '../models/user.js'; // Asegúrate de importar User
-import Medic from '../models/medic.js'; // Importa Medic
-import Patient from '../models/patient.js'; // Importa Patient
 
 const router = Router();
 

@@ -1,8 +1,7 @@
-// models/appointment.js
 import { DataTypes } from 'sequelize';
 import db from '../database/database.js';
-import  Medic  from './medic.js';
-import  Patient  from './patient.js';
+import Medic from './medic.js';
+import Patient from './patient.js';
 
 const Appointment = db.define('Appointment', {
   id: {
@@ -26,7 +25,7 @@ const Appointment = db.define('Appointment', {
   timestamps: false,
 });
 
-// Relaciones
+// Define las relaciones
 Appointment.belongsTo(Medic, { foreignKey: 'medicId' });
 Appointment.belongsTo(Patient, { foreignKey: 'patientId' });
 Medic.hasMany(Appointment, { foreignKey: 'medicId' });

@@ -1,25 +1,23 @@
 import { DataTypes } from 'sequelize';
 import db from '../database/database.js';
-import User from './user.js';
+import User from './user.js'; // Importa el modelo User
 
 const Medic = db.define('Medic', {
-  userId: {
+  id: {
     type: DataTypes.INTEGER,
-    references: {
-      model: User,
-      key: 'id',
-    },
-    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
   },
   speciality: {
     type: DataTypes.STRING,
     allowNull: false,
-  },
+  }
 }, {
   timestamps: true,
 });
 
-User.hasOne(Medic, { foreignKey: 'userId' });
+// Define la relación entre Medic y User
 Medic.belongsTo(User, { foreignKey: 'userId' });
+User.hasOne(Medic, { foreignKey: 'userId' });
 
 export default Medic;
