@@ -8,6 +8,8 @@ import {
   deleteAppointment,
 } from '../controllers/appointment.controllers.js';
 import User from '../models/user.js'; // Asegúrate de importar User
+import Medic from '../models/medic.js'; // Importa Medic
+import Patient from '../models/patient.js'; // Importa Patient
 
 const router = Router();
 
@@ -18,9 +20,26 @@ router.get('/new', async (req, res) => {
   if (!user) {
     return res.redirect('/login'); // Redirige al login si no hay usuario en sesión
   }
+
   try {
-    // Renderiza el formulario de citas con la información del usuario en sesión
-    res.render('appointment_form', { user });
+    // Carga los datos necesarios según el rol del usuario
+    let medics = [];
+    let patients = [];
+
+    if (user.role === 'patient') {
+      // Si el usuario es un paciente, carga los médicos
+      medics = await Medic.findAll({
+        include: [{ model: User, attributes: ['fullname'] }],
+      });
+    } else if (user.role === 'medic') {
+      // Si el usuario es un médico, carga los pacientes
+      patients = await Patient.findAll({
+        include: [{ model: User, attributes: ['fullname'] }],
+      });
+    }
+
+    // Renderiza el formulario de citas con los datos del usuario en sesión y los datos cargados
+    res.render('appointment_form', { user, medics, patients });
   } catch (error) {
     res.status(500).send(error.message);
   }
