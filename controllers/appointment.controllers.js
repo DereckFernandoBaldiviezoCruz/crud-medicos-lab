@@ -5,8 +5,42 @@ import User from '../models/user.js';
 
 export async function getAllAppointments(req, res) {
   try {
-    const appointments = await Appointment.findAll();
+    const appointments = await Appointment.findAll({
+      include: [
+        { model: Medic, include: [{ model: User, attributes: ['fullname'] }] },
+        { model: Patient, include: [{ model: User, attributes: ['fullname'] }] },
+      ],
+    });
     res.render('index_appointments', { appointments });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+export async function renderAppointmentForm(req, res) {
+  try {
+    const medics = await Medic.findAll({
+      include: [{ model: User, attributes: ['fullname'] }],
+    });
+    const patients = await Patient.findAll({
+      include: [{ model: User, attributes: ['fullname'] }],
+    });
+    res.render('appointment_form', { medics, patients });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
+
+export async function createAppointment(req, res) {
+  const { date, time, medicId, patientId } = req.body;
+  try {
+    const newAppointment = await Appointment.create({
+      date,
+      time,
+      medicId,
+      patientId,
+    });
+    res.redirect('/appointments');
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -25,47 +59,6 @@ export async function getAppointmentById(req, res) {
       return res.status(404).send('Appointment not found');
     }
     res.render('view_appointment', { appointment });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
-
-export async function createAppointment(req, res) {
-  const { date, time, medicId, patientId } = req.body;
-  try {
-    const newAppointment = await Appointment.create({
-      date,
-      time,
-      medicId,
-      patientId,
-    });
-
-    res.redirect('/appointments');
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
-
-export async function renderAppointmentForm(req, res) {
-  try {
-    const { user } = req.session;
-    if (!user) {
-      return res.redirect('/login');
-    }
-
-    if (user.role === 'patient') {
-      res.render('appointment_form', { user });
-    } else if (user.role === 'medic') {
-      const patients = await Patient.findAll({
-        include: [{ model: User, attributes: ['fullname'] }],
-      });
-      res.render('appointment_form', { user, patients });
-    } else {
-      const medics = await Medic.findAll({
-        include: [{ model: User, attributes: ['fullname'] }],
-      });
-      res.render('appointment_form', { user, medics });
-    }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

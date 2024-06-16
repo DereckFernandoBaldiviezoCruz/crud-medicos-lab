@@ -1,0 +1,31 @@
+extends layout
+
+block content
+  .container
+    h1 Lista de Citas
+    a(href='/appointments/new' class='btn btn-primary mb-3') Crear nueva cita
+
+    table.table.table-striped
+      thead
+        tr
+          th ID
+          th Fecha
+          th Hora
+          th Médico
+          th Paciente
+          th Estado
+          th Acciones
+      tbody
+        each appointment in appointments
+          tr
+            td #{appointment.id}
+            td #{appointment.date}
+            td #{appointment.time}
+            td #{appointment.Medic.User.fullname}
+            td #{appointment.Patient.User.fullname}
+            td #{appointment.status}
+            td
+              a(href=`/appointments/${appointment.id}` class='btn btn-info btn-sm mr-2') Ver
+              a(href=`/appointments/${appointment.id}/edit` class='btn btn-warning btn-sm mr-2') Editar
+              form(action=`/appointments/${appointment.id}/delete` method='POST' style='display:inline')
+                button(type='submit' class='btn btn-danger btn-sm') Eliminar
