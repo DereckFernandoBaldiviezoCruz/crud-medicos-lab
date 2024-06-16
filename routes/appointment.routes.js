@@ -3,7 +3,6 @@ import {
   getAllAppointments,
   getAppointmentById,
   createAppointment,
-  renderAppointmentForm,
   updateAppointment,
   deleteAppointment,
 } from '../controllers/appointment.controllers.js';

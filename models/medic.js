@@ -8,6 +8,14 @@ const Medic = db.define('Medic', {
     primaryKey: true,
     autoIncrement: true,
   },
+  userId: { // Asegúrate de que userId está definido aquí
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: 'id',
+    },
+  },
   speciality: {
     type: DataTypes.STRING,
     allowNull: false,

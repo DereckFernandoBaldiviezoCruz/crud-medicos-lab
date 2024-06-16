@@ -27,21 +27,8 @@ app.use(express.static('public'));
 
 // Ruta principal
 app.get('/', (req, res) => {
-  res.redirect('/appointments/new');
+  res.render('index');
 });
-
-// Elimina o comenta las rutas específicas para cada rol
-// app.get('/admin', requireLogin, (req, res) => {
-//   res.render('index_admin');
-// });
-
-// app.get('/patient', requireLogin, (req, res) => {
-//   res.render('index_patient');
-// });
-
-// app.get('/medic', requireLogin, (req, res) => {
-//   res.render('index_medic');
-// });
 
 app.get('/login', (req, res) => {
   res.render('login');

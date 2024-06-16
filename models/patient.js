@@ -8,6 +8,14 @@ const Patient = db.define('Patient', {
     primaryKey: true,
     autoIncrement: true,
   },
+  userId: { // Asegúrate de que userId está definido aquí
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: 'id',
+    },
+  },
   medicalHistory: {
     type: DataTypes.STRING,
     allowNull: true,
