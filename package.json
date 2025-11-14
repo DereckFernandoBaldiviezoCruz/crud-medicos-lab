@@ -9,7 +9,7 @@
     "body-parser": "^1.19.0",
     "connect-pg-simple": "^9.0.1",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
+    "express": "^4.21.2",
     "express-session": "^1.18.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
@@ -17,5 +17,19 @@
     "pg-hstore": "^2.3.3",
     "pug": "^3.0.3",
     "sequelize": "^6.3.5"
-  }
+  },
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DereckFernandoBaldiviezoCruz/crud-medicos-lab.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DereckFernandoBaldiviezoCruz/crud-medicos-lab/issues"
+  },
+  "homepage": "https://github.com/DereckFernandoBaldiviezoCruz/crud-medicos-lab#readme"
 }
