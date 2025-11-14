@@ -3,7 +3,7 @@ import { DataTypes } from 'sequelize';
 import db from '../database/database.js';
 import Patient from './patient.js';
 import Medic from './medic.js';
-import HealthCenter from '../healthCenter.js';
+import HealthCenter from './healthCenter.js';
 import Specialty from './specialty.js';
 
 const Referral = db.define('Referral', {
