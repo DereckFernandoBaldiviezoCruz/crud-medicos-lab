@@ -1,90 +1,101 @@
-import { Sequelize } from 'sequelize';
+// controllers/user.controllers.js
 import User from '../models/user.js';
-import Patient from '../models/patient.js';
-import Medic from '../models/medic.js';
 
-export async function getAllUsers(req, res) {
-  try {
-    const users = await User.findAll();
-    res.render('index_users', { users });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
-
-export async function searchUsers(req, res) {
-  const { query } = req.query;
+// Obtener todos los usuarios
+export const getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll({
-      where: {
-        [Sequelize.Op.or]: [
-          { fullname: { [Sequelize.Op.iLike]: `%${query}%` } },
-          { username: { [Sequelize.Op.iLike]: `%${query}%` } },
-          { role: { [Sequelize.Op.iLike]: `%${query}%` } }
-        ]
-      }
+      attributes: ['id', 'fullname', 'username', 'role', 'createdAt', 'updatedAt']
     });
-    res.render('index_users', { users });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.json(users);
+  } catch (err) {
+    console.error('Error getAllUsers:', err);
+    res.status(500).json({ message: 'Error al obtener usuarios' });
   }
-}
+};
 
-export async function getUserById(req, res) {
-  const { id } = req.params;
+// Obtener un usuario por ID
+export const getUserById = async (req, res) => {
   try {
+    const { id } = req.params;
+    const user = await User.findByPk(id, {
+      attributes: ['id', 'fullname', 'username', 'role', 'createdAt', 'updatedAt']
+    });
+
+    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+
+    res.json(user);
+  } catch (err) {
+    console.error('Error getUserById:', err);
+    res.status(500).json({ message: 'Error al obtener usuario' });
+  }
+};
+
+// Crear usuario (similar a /admin/users, pero más genérico)
+export const createUser = async (req, res) => {
+  try {
+    const { fullname, username, password, role } = req.body;
+
+    if (!fullname || !username || !password || !role) {
+      return res.status(400).json({ message: 'Faltan datos obligatorios' });
+    }
+
+    if (!['admin', 'medic', 'patient'].includes(role)) {
+      return res.status(400).json({ message: 'Rol inválido' });
+    }
+
+    const existing = await User.findOne({ where: { username } });
+    if (existing) {
+      return res.status(400).json({ message: 'El username ya existe' });
+    }
+
+    // OJO: por ahora sin bcrypt, solo para pruebas
+    const user = await User.create({ fullname, username, password, role });
+    res.status(201).json(user);
+  } catch (err) {
+    console.error('Error createUser:', err);
+    res.status(500).json({ message: 'Error al crear usuario' });
+  }
+};
+
+// Actualizar usuario
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { fullname, password, role } = req.body;
+
     const user = await User.findByPk(id);
-    if (!user) {
-      return res.status(404).send('User not found');
-    }
-    res.render('view', { user });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
+    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
 
-export async function createUser(req, res) {
-  const { fullname, username, password, role, speciality, medicalHistory } = req.body;
-  try {
-    const newUser = await User.create({ fullname, username, password, role });
-
-    if (role === 'patient') {
-      await Patient.create({ userId: newUser.id, medicalHistory });
-    } else if (role === 'medic') {
-      await Medic.create({ userId: newUser.id, speciality });
+    if (fullname !== undefined) user.fullname = fullname;
+    if (password !== undefined) user.password = password; // sin hash, prueba
+    if (role !== undefined) {
+      if (!['admin', 'medic', 'patient'].includes(role)) {
+        return res.status(400).json({ message: 'Rol inválido' });
+      }
+      user.role = role;
     }
 
-    res.redirect('/users');
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
-
-export async function updateUser(req, res) {
-  const { id } = req.params;
-  const { fullname, username, password, role } = req.body;
-  try {
-    const user = await User.findByPk(id);
-    if (!user) {
-      return res.status(404).send('User not found');
-    }
-    user.fullname = fullname;
-    user.username = username;
-    user.password = password;
-    user.role = role;
     await user.save();
-    res.redirect('/users');
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.json(user);
+  } catch (err) {
+    console.error('Error updateUser:', err);
+    res.status(500).json({ message: 'Error al actualizar usuario' });
   }
-}
+};
 
-export async function deleteUser(req, res) {
-  const { id } = req.params;
+// Eliminar usuario
+export const deleteUser = async (req, res) => {
   try {
-    await User.destroy({ where: { id } });
-    res.redirect('/users');
-  } catch (error) {
-    res.status (500).json({ message: error.message });
+    const { id } = req.params;
+
+    const user = await User.findByPk(id);
+    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+
+    await user.destroy();
+    res.json({ message: 'Usuario eliminado correctamente' });
+  } catch (err) {
+    console.error('Error deleteUser:', err);
+    res.status(500).json({ message: 'Error al eliminar usuario' });
   }
-}
+};
