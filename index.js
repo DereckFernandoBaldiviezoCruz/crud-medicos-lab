@@ -5,7 +5,6 @@ import db from './database/database.js';
 
 // Rutas
 import authRoutes from './routes/auth.routes.js';
-import adminRoutes from './routes/admin.routes.js';
 import appointmentRoutes from './routes/appointment.routes.js';
 import consultationRoutes from './routes/consultation.routes.js';
 import referralRoutes from './routes/referral.routes.js';
