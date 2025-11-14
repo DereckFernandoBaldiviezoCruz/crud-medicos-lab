@@ -9,6 +9,9 @@ import adminRoutes from './routes/admin.routes.js';
 import appointmentRoutes from './routes/appointment.routes.js';
 import consultationRoutes from './routes/consultation.routes.js';
 import referralRoutes from './routes/referral.routes.js';
+import adminRoutes from './routes/admin.routes.js'; // 👈 NUEVA
+import path from 'path'; 
+import { fileURLToPath } from 'url'; 
 
 // Opcionales (si luego quieres crear más controladores)
 import userRoutes from './routes/user.routes.js';       // CRUD usuarios
@@ -21,6 +24,14 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Usar fileURLToPath para obtener __dirname en ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Configura la carpeta pública para servir archivos estáticos (si tienes imágenes o CSS)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Ruta raíz para probar
 // ----------------------------
 // Ruta raíz para probar Render
 // ----------------------------
@@ -28,6 +39,19 @@ app.get('/', (req, res) => {
   res.send('🩺 API SUS — Gestor de Citas funcionando correctamente ✔️');
 });
 
+//LOGIN
+app.get('/auth/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'login.html')); // Asegúrate de que el archivo login.html esté en la carpeta 'views'
+});
+//END LOGIN
+// Ruta de logout
+app.get('/logout', (req, res) => {
+  // Aquí puedes limpiar la sesión o el token (si usas JWT)
+  res.redirect('/auth/login');  // Redirigir al formulario de login
+});
+// END LOGOUT
+
+// Rutas
 // ----------------------------
 // Rutas principales del sistema
 // ----------------------------
@@ -47,6 +71,8 @@ app.use('/consultations', consultationRoutes);
 // Derivaciones entre centros/especialidades
 app.use('/referrals', referralRoutes);
 
+
+// Conexión y sync
 // CRUD de usuarios (opcional)
 app.use('/users', userRoutes);
 
