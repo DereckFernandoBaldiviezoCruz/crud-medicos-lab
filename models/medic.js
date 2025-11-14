@@ -1,32 +1,26 @@
-import { DataTypes, Model } from 'sequelize';
-import sequelize from '../database/database.js';
-import User from './user.js'; // Importa el modelo User si es necesario
+// models/medic.js
+import { DataTypes } from 'sequelize';
+import db from '../database/database.js';
+import User from './user.js';
+import HealthCenter from '../healthCenter.js';
+import Specialty from './specialty.js';
 
-class Medic extends Model {}
+const Medic = db.define('Medic', {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  userId: { type: DataTypes.INTEGER, allowNull: false, unique: true },
+  specialtyId: { type: DataTypes.INTEGER, allowNull: false }, // FK a Specialty
+  healthCenterId: { type: DataTypes.INTEGER, allowNull: false }, // centro principal
+}, {
+  timestamps: true,
+});
 
-Medic.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      unique: true, // Esto depende de tu diseño de base de datos
-    },
-    speciality: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-  },
-  {
-    sequelize,
-    modelName: 'Medic',
-  }
-);
+Medic.belongsTo(User, { foreignKey: 'userId' });
+User.hasOne(Medic, { foreignKey: 'userId' });
 
-Medic.belongsTo(User, { foreignKey: 'userId' }); // Define la relación con User si es necesario
+Medic.belongsTo(Specialty, { foreignKey: 'specialtyId' });
+Specialty.hasMany(Medic, { foreignKey: 'specialtyId' });
+
+Medic.belongsTo(HealthCenter, { foreignKey: 'healthCenterId' });
+HealthCenter.hasMany(Medic, { foreignKey: 'healthCenterId' });
 
 export default Medic;

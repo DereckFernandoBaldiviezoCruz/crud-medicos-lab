@@ -3,15 +3,24 @@ import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const db = new Sequelize('api_medic', 'dereck', 'mApgDMRQDO1xsd2TXof1rOOCOti2qsHJ', {
-  host: 'dpg-cplimjo8fa8c73aa5q60-a',  // updated host
+// Ejemplo:
+// postgres://user:pass@host:5432/dbname
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  console.error('Falta la variable DATABASE_URL');
+}
+
+const db = new Sequelize(connectionString, {
   dialect: 'postgres',
-  port: 5432,
-  pool: {
-    max: 5,
-    min: 0,
-    idle: 10000
-  }
+  protocol: 'postgres',
+  logging: false,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false, // necesario en muchos hostings
+    },
+  },
 });
 
 export default db;

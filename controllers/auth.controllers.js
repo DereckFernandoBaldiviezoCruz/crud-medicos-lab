@@ -1,28 +1,35 @@
-// auth.controllers.js
-
+// controllers/auth.controllers.js
+import bcrypt from 'bcrypt';
 import User from '../models/user.js';
+import Patient from '../models/patient.js';
+import Medic from '../models/medic.js';
 
-// Login de usuario
 export const login = async (req, res) => {
-  const { username, password } = req.body;
   try {
-    const user = await User.findOne({ where: { username, password } });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+    const { username, password } = req.body;
+    const user = await User.findOne({ where: { username } });
+
+    if (!user) return res.status(401).json({ message: 'Credenciales inválidas' });
+
+    // OJO: si no usas bcrypt, reemplaza por comparación simple
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(401).json({ message: 'Credenciales inválidas' });
+
+    // puedes guardar datos en sesión o devolver JWT
+    const data = { id: user.id, fullname: user.fullname, role: user.role };
+
+    if (user.role === 'patient') {
+      const patient = await Patient.findOne({ where: { userId: user.id } });
+      data.patientId = patient?.id;
+    }
+    if (user.role === 'medic') {
+      const medic = await Medic.findOne({ where: { userId: user.id } });
+      data.medicId = medic?.id;
     }
 
-    // Guarda el usuario en la sesión
-    req.session.user = user;
-
-    // Redirecciona según el rol del usuario
-    if (user.role === 'admin') {
-      res.redirect('/admin'); // Redirige al dashboard de admin
-    } else if (user.role === 'patient') {
-      res.redirect('/patient'); // Redirige al dashboard de paciente
-    } else if (user.role === 'medic') {
-      res.redirect('/medic'); // Redirige al dashboard de médico
-    }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.json({ user: data });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error en login' });
   }
 };

@@ -1,92 +1,77 @@
+// controllers/appointment.controllers.js
 import Appointment from '../models/appointment.js';
-import Medic from '../models/medic.js';
 import Patient from '../models/patient.js';
-import User from '../models/user.js';
+import Medic from '../models/medic.js';
+import Specialty from '../models/specialty.js';
+import Consultation from '../models/consultation.js';
 
-export async function getAllAppointments(req, res) {
+export const createFirstAppointment = async (req, res) => {
   try {
-    const appointments = await Appointment.findAll({
-      include: [
-        { model: Medic, include: [{ model: User, attributes: ['fullname'] }] },
-        { model: Patient, include: [{ model: User, attributes: ['fullname'] }] },
-      ],
-    });
-    res.render('index_appointments', { appointments });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
+    const { patientId } = req.body; // o desde sesión
+    const { date, time, reason } = req.body;
 
-export async function renderAppointmentForm(req, res) {
-  try {
-    const medics = await Medic.findAll({
-      include: [{ model: User, attributes: ['fullname'] }],
-    });
-    const patients = await Patient.findAll({
-      include: [{ model: User, attributes: ['fullname'] }],
-    });
-    res.render('appointment_form', { medics, patients });
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-}
+    const patient = await Patient.findByPk(patientId);
+    if (!patient) return res.status(404).json({ message: 'Paciente no encontrado' });
 
-export async function createAppointment(req, res) {
-  const { date, time, medicId, patientId } = req.body;
-  try {
-    const newAppointment = await Appointment.create({
+    // buscar especialidad general
+    const generalSpecialty = await Specialty.findOne({ where: { isGeneral: true } });
+    if (!generalSpecialty) {
+      return res.status(500).json({ message: 'No existe especialidad de medicina general configurada' });
+    }
+
+    // médico general en el centro del paciente (escogemos cualquiera disponible por ahora)
+    const medicGeneral = await Medic.findOne({
+      where: {
+        healthCenterId: patient.healthCenterId,
+        specialtyId: generalSpecialty.id,
+      },
+    });
+
+    if (!medicGeneral) {
+      return res.status(400).json({ message: 'No hay médico general asignado a su centro de salud' });
+    }
+
+    const appointment = await Appointment.create({
+      patientId: patient.id,
+      medicId: medicGeneral.id,
+      healthCenterId: patient.healthCenterId,
+      specialtyId: generalSpecialty.id,
       date,
       time,
-      medicId,
-      patientId,
+      type: 'first',
+      status: 'pending',
+      reason,
     });
-    res.redirect('/appointments');
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
 
-export async function getAppointmentById(req, res) {
-  const { id } = req.params;
+    res.status(201).json(appointment);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error al crear cita' });
+  }
+};
+
+export const listAppointmentsByPatient = async (req, res) => {
   try {
-    const appointment = await Appointment.findByPk(id, {
-      include: [
-        { model: Medic, include: [{ model: User, attributes: ['fullname'] }] },
-        { model: Patient, include: [{ model: User, attributes: ['fullname'] }] },
-      ],
+    const { patientId } = req.params;
+    const appointments = await Appointment.findAll({
+      where: { patientId },
+      order: [['date', 'ASC'], ['time', 'ASC']],
     });
-    if (!appointment) {
-      return res.status(404).send('Appointment not found');
-    }
-    res.render('view_appointment', { appointment });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.json(appointments);
+  } catch (err) {
+    res.status(500).json({ message: 'Error al listar citas' });
   }
-}
+};
 
-export async function updateAppointment(req, res) {
-  const { id } = req.params;
-  const { date, time } = req.body;
+export const listAppointmentsByMedic = async (req, res) => {
   try {
-    const appointment = await Appointment.findByPk(id);
-    if (!appointment) {
-      return res.status(404).send('Appointment not found');
-    }
-    appointment.date = date;
-    appointment.time = time;
-    await appointment.save();
-    res.redirect('/appointments');
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    const { medicId } = req.params;
+    const appointments = await Appointment.findAll({
+      where: { medicId },
+      order: [['date', 'ASC'], ['time', 'ASC']],
+    });
+    res.json(appointments);
+  } catch (err) {
+    res.status(500).json({ message: 'Error al listar citas del médico' });
   }
-}
-
-export async function deleteAppointment(req, res) {
-  const { id } = req.params;
-  try {
-    await Appointment.destroy({ where: { id } });
-    res.redirect('/appointments');
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
+};

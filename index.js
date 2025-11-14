@@ -1,51 +1,38 @@
+// index.js
 import express from 'express';
-import morgan from 'morgan';
-import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
 import db from './database/database.js';
-import userRoutes from './routes/user.routes.js';
+
 import authRoutes from './routes/auth.routes.js';
 import appointmentRoutes from './routes/appointment.routes.js';
-import dotenv from 'dotenv';
+import consultationRoutes from './routes/consultation.routes.js';
+import referralRoutes from './routes/referral.routes.js';
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.set('view engine', 'pug');
-app.set('views', './views');
-
-app.use(morgan('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-app.use('/users', userRoutes);
+// Rutas
 app.use('/auth', authRoutes);
 app.use('/appointments', appointmentRoutes);
+app.use('/consultations', consultationRoutes);
+app.use('/referrals', referralRoutes);
 
-app.use(express.static('public'));
+// Sincronizar modelos
+(async () => {
+  try {
+    await db.authenticate();
+    console.log('DB conectada');
+    await db.sync({ alter: true }); // cuidado en producción
+    console.log('Modelos sincronizados');
+  } catch (err) {
+    console.error('Error al conectar DB', err);
+  }
+})();
 
-// Ruta principal
-app.get('/', (req, res) => {
-  res.render('index');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor escuchando en puerto ${PORT}`);
 });
-
-app.get('/login', (req, res) => {
-  res.render('login');
-});
-
-// Conexión a la base de datos y arranque del servidor
-db.authenticate()
-  .then(() => {
-    console.log('Database connected');
-    return db.sync(); // Sincroniza los modelos con la base de datos
-  })
-  .then(() => {
-    console.log('Models synchronized');
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
-  })
-  .catch((error) => {
-    console.error('Unable to connect to the database:', error);
-  });

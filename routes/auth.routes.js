@@ -1,4 +1,4 @@
-// En tu archivo de rutas
+// routes/auth.routes.js
 import { Router } from 'express';
 import { login } from '../controllers/auth.controllers.js';
 

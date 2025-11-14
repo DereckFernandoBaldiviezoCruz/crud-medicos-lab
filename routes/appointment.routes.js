@@ -1,20 +1,15 @@
+// routes/appointment.routes.js
 import { Router } from 'express';
 import {
-  getAllAppointments,
-  getAppointmentById,
-  createAppointment,
-  updateAppointment,
-  deleteAppointment,
-  renderAppointmentForm
+  createFirstAppointment,
+  listAppointmentsByPatient,
+  listAppointmentsByMedic,
 } from '../controllers/appointment.controllers.js';
 
 const router = Router();
 
-router.get('/', getAllAppointments);
-router.get('/new', renderAppointmentForm);
-router.post('/', createAppointment);
-router.get('/:id', getAppointmentById);
-router.post('/:id', updateAppointment);
-router.post('/:id/delete', deleteAppointment);
+router.post('/', createFirstAppointment);
+router.get('/patient/:patientId', listAppointmentsByPatient);
+router.get('/medic/:medicId', listAppointmentsByMedic);
 
 export default router;
