@@ -1,22 +1,18 @@
-// medic.routes.js
+// routes/medic.routes.js
 import { Router } from 'express';
 import {
-  getMedics,
-  createMedic,
-  updateMedic,
-  getMedic,
-  deleteMedic,
-  getMedicOffices,
-} from '../controllers/medic.controllers.js'; // Asegúrate de que la ruta sea correcta aquí
+  getAllMedics,
+  getMedicById,
+} from '../controllers/medic.controllers.js';
 
 const router = Router();
 
-// Definir las rutas
-router.post("/", createMedic);
-router.get("/", getMedics);
-router.put("/:id", updateMedic);
-router.delete("/:id", deleteMedic);
-router.get("/:id", getMedic);
-router.get("/:id/offices", getMedicOffices);
+// GET /medics   → lista todos los médicos
+router.get('/', getAllMedics);
+
+// GET /medics/:id   → obtiene un médico por ID
+router.get('/:id', getMedicById);
+
+
 
 export default router;
