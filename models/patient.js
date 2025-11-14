@@ -2,7 +2,7 @@
 import { DataTypes } from 'sequelize';
 import db from '../database/database.js';
 import User from './user.js';
-import HealthCenter from '../healthCenter.js';
+import HealthCenter from './healthCenter.js';
 
 const Patient = db.define('Patient', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },

@@ -4,7 +4,7 @@ import db from '../database/database.js';
 import Consultation from './consultation.js';
 import Medic from './medic.js';
 import Patient from './patient.js';
-import HealthCenter from '../healthCenter.js';
+import HealthCenter from './healthCenter.js';
 
 const Prescription = db.define('Prescription', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
