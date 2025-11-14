@@ -9,6 +9,8 @@ import adminRoutes from './routes/admin.routes.js';
 import appointmentRoutes from './routes/appointment.routes.js';
 import consultationRoutes from './routes/consultation.routes.js';
 import referralRoutes from './routes/referral.routes.js';
+import availabilityRoutes from './routes/availability.routes.js';
+import scheduleSlotRoutes from './routes/scheduleSlot.routes.js';
 
 // Opcionales (si luego quieres crear más controladores)
 import userRoutes from './routes/user.routes.js';       // CRUD usuarios
@@ -55,6 +57,10 @@ app.use('/patients', patientRoutes);
 
 // CRUD de médicos (opcional)
 app.use('/medics', medicRoutes);
+
+// Disponibilidades y turnos
+app.use('/availabilities', availabilityRoutes);
+app.use('/scheduleslots', scheduleSlotRoutes);
 
 
 // ----------------------------
