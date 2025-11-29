@@ -1,43 +1,52 @@
 // routes/auth.routes.js
 import { Router } from 'express';
-import { fileURLToPath } from 'url';  // Necesario para convertir la URL a una ruta de archivo
+import { fileURLToPath } from 'url';
 import path from 'path';
 import User from '../models/user.js';
+import Patient from '../models/patient.js'; // 👈 ASEGÚRATE DE IMPORTARLO
 import { login } from '../controllers/auth.controllers.js';
 
 const router = Router();
 
-// router.post('/login', login);
-const __filename = fileURLToPath(import.meta.url);  // Obtener la URL del archivo actual
-const __dirname = path.dirname(__filename); 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+// LOGIN REAL
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    const user = await User.findOne({ where: { username } });
+    // ⬅️ AHORA INCLUÍMOS EL PACIENTE PARA TENER fullname, SEI, CI, etc.
+    const user = await User.findOne({
+      where: { username },
+      include: [
+        { model: Patient, as: 'Patient' } // 👈 TRÁEME EL PACIENTE ASOCIADO
+      ]
+    });
+
+    console.log("Usuario logueado:", JSON.stringify(user, null, 2));
 
     if (!user || user.password !== password) {
       return res.status(401).json({ message: 'Credenciales inválidas' });
     }
 
-    const data = {
-      id: user.id,
-      fullname: user.fullname,
-      role: user.role,
-    };
+    // Guardamos el usuario completo en sesión
+    req.session.user = user;
 
-   // Si es un paciente, redirigir a su dashboard
-    if (user.role === 'patient') {
-      return res.sendFile(path.join(__dirname, '../views/patient/dashboard.html'));  // Usar __dirname para referir la ruta correcta
-    }
-
-    // Si es un administrador, redirigir a su dashboard
+    // Redirecciones según rol
     if (user.role === 'admin') {
-      return res.sendFile(path.join(__dirname, '../views/admin/dashboard.html'));  // Usar __dirname para referir la ruta correcta
+      return res.redirect('/admin');
     }
 
-    // Si el rol no es reconocido, redirigir al login o home
+    if (user.role === 'patient') {
+      return res.redirect('/patient/panel');
+    }
+
+    if (user.role === 'medic') {
+      return res.redirect('/medic');
+    }
+
+    // Si no coincide ningún rol
     return res.redirect('/auth/login');
 
   } catch (err) {
@@ -45,6 +54,5 @@ router.post('/login', async (req, res) => {
     return res.status(500).json({ message: 'Error interno en login' });
   }
 });
-
 
 export default router;

@@ -1,0 +1,32 @@
+extends ../layout_admin
+
+block content
+  h1 Usuarios del sistema
+
+  a(href="/admin/users/new") ➕ Crear nuevo usuario
+  br
+  br
+
+  if users.length === 0
+    p No hay usuarios registrados.
+  else
+    table(border="1" cellpadding="8")
+      thead
+        tr
+          th ID
+          th Nombre
+          th Usuario
+          th Rol
+          th Acciones
+
+      tbody
+        each user in users
+          tr
+            td= user.id
+            td= user.fullname
+            td= user.username
+            td= user.role
+            td
+              a(href=`/admin/users/${user.id}/edit`) ✏ Editar
+              |  
+              a(href=`/admin/users/${user.id}/delete`) ❌ Eliminar

@@ -1,0 +1,32 @@
+extends ./layout_patient
+
+block content
+  h1 Mi ficha de hoy
+
+  if ficha
+    p 
+      strong Especialidad: 
+      | #{ficha.specialty.name}
+
+    p 
+      strong Hora: 
+      | #{ficha.time}
+
+    p 
+      strong Médico: 
+      | #{ficha.medic.User.fullname}
+
+    p 
+      strong Centro de salud: 
+      | #{ficha.healthCenter.name}
+
+    p 
+      strong Estado: 
+      | #{ficha.status}
+
+  else
+    p No tienes ficha registrada hoy.
+
+  hr
+
+  a(href="/patient/panel") Volver al panel

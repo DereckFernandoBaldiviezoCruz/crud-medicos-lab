@@ -1,0 +1,16 @@
+extends ../layout_admin
+
+block content
+  h1 Editar especialidad
+
+  form(action=`/admin/specialties/${specialty.id}/edit` method="POST")
+    div
+      label Nombre:
+      input(type="text" name="name" value=specialty.name required)
+
+    div
+      label Médico general:
+      input(type="checkbox" name="isGeneral" checked=specialty.isGeneral)
+
+    div
+      button(type="submit") Actualizar

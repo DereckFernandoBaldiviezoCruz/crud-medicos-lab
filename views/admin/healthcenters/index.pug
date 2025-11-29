@@ -1,0 +1,28 @@
+extends ../layout_admin
+
+block content
+  h1 Centros de salud registrados
+
+  a(href="/admin/healthcenters/new") Registrar nuevo centro
+
+  table(border="1" cellpadding="6")
+    thead
+      tr
+        th ID
+        th Nombre
+        th Nivel
+        th Dirección
+        th Ciudad
+        th Acciones
+    tbody
+      each center in centers
+        tr
+          td= center.id
+          td= center.name
+          td= center.level
+          td= center.address
+          td= center.city
+          td
+            a(href=`/admin/healthcenters/${center.id}/edit`) Editar
+            |  |
+            a(href=`/admin/healthcenters/${center.id}/delete`) Eliminar

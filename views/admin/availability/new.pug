@@ -1,0 +1,92 @@
+extends ../layout_admin
+
+block content
+  h1 Registrar nuevo horario
+
+  form(method="POST" action="/admin/availabilities")
+    
+    label Especialidad:
+    select(name="specialtyId" id="specialtySelect" required)
+      option(value="") Seleccione una especialidad
+      each s in specialties
+        option(value=s.id)= s.name
+
+    br
+
+    label Médico:
+    select(name="medicId" id="medicSelect" required disabled)
+      option(value="") Seleccione una especialidad primero
+
+    br 
+
+    label Centro de Salud (automático):
+    input(type="text" id="centerName" readonly)
+
+    input(type="hidden" id="centerId" name="healthCenterId")
+
+    br
+
+    label Día de la semana:
+    select(name="dayOfWeek" required)
+      option(value="1") Lunes
+      option(value="2") Martes
+      option(value="3") Miércoles
+      option(value="4") Jueves
+      option(value="5") Viernes
+
+    br
+
+    label Hora de inicio:
+    input(type="time" name="startTime" required)
+
+    br
+
+    label Hora de fin:
+    input(type="time" name="endTime" required)
+
+    br
+    
+    label Duración de cita (minutos):
+    input(type="number" name="durationMinutes" min="5" max="60" value="15" required)
+
+    br
+    button(type="submit") Guardar
+
+  script.
+    const specialtySelect = document.getElementById("specialtySelect");
+    const medicSelect = document.getElementById("medicSelect");
+    const centerName = document.getElementById("centerName");
+    const centerId = document.getElementById("centerId");
+
+    specialtySelect.addEventListener("change", async () => {
+      const id = specialtySelect.value;
+
+      medicSelect.innerHTML = "";
+      medicSelect.disabled = true;
+      centerName.value = "";
+      centerId.value = "";
+
+      if (!id) return;
+
+      const res = await fetch(`/admin/medics/by-specialty/${id}`);
+      const medics = await res.json();
+
+      medicSelect.disabled = false;
+      medicSelect.innerHTML = `<option value="">Seleccione un médico</option>`;
+
+      medics.forEach(m => {
+        medicSelect.innerHTML += `
+          <option value="${m.id}" data-center-id="${m.HealthCenter.id}" data-center-name="${m.HealthCenter.name}">
+            ${m.User.fullname}
+          </option>
+        `;
+      });
+    });
+
+    medicSelect.addEventListener("change", () => {
+      const option = medicSelect.selectedOptions[0];
+      if (!option) return;
+
+      centerName.value = option.dataset.centerName;
+      centerId.value = option.dataset.centerId;
+    });

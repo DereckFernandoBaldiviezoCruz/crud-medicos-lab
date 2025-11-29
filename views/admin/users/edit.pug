@@ -1,0 +1,29 @@
+extends ../layout_admin
+
+block content
+  h1 Editar usuario
+
+  form(action=`/admin/users/${user.id}/edit` method="POST")
+    label Nombre completo:
+    input(type="text" name="fullname" value=user.fullname required)
+    br
+    br
+
+    label Nombre de usuario:
+    input(type="text" name="username" value=user.username required)
+    br
+    br
+
+    label Rol:
+    select(name="role" required)
+      option(value="admin" selected=user.role==='admin') Administrador
+      option(value="medic" selected=user.role==='medic') Médico
+      option(value="patient" selected=user.role==='patient') Paciente
+
+    br
+    br
+
+    button(type="submit") Guardar cambios
+
+  br
+  a(href="/admin/users") ← Volver

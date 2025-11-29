@@ -1,18 +1,26 @@
-// routes/medic.routes.js
-import { Router } from 'express';
+import { Router } from "express";
 import {
-  getAllMedics,
-  getMedicById,
-} from '../controllers/medic.controllers.js';
+  medicDashboard,
+  medicNoShow,
+  medicAttend,
+  saveConsultation,
+  medicPrescriptionForm,
+  savePrescription
+} from "../controllers/medic.controllers.js";
 
 const router = Router();
 
-// GET /medics   → lista todos los médicos
-router.get('/', getAllMedics);
+router.get("/", medicDashboard);
 
-// GET /medics/:id   → obtiene un médico por ID
-router.get('/:id', getMedicById);
+router.get("/slot/:id/attend", medicAttend);
 
+router.get("/slot/:id/no_show", medicNoShow);
+
+router.post("/consulta/:slotId", saveConsultation);
+
+router.get("/receta/:slotId", medicPrescriptionForm);
+
+router.post("/receta/:slotId", savePrescription);
 
 
 export default router;

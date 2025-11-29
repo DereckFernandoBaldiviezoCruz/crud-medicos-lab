@@ -7,11 +7,16 @@ import Patient from './patient.js';
 
 const Consultation = db.define('Consultation', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+
+  reason: { type: DataTypes.TEXT, allowNull: true },      // Motivo de consulta
+  symptoms: { type: DataTypes.TEXT, allowNull: true },    // Síntomas / antecedentes
+
   diagnosis: { type: DataTypes.TEXT, allowNull: true },
   notes: { type: DataTypes.TEXT, allowNull: true },
 }, {
   timestamps: true,
 });
+
 
 Consultation.belongsTo(Appointment, { foreignKey: 'appointmentId' });
 Appointment.hasOne(Consultation, { foreignKey: 'appointmentId' });

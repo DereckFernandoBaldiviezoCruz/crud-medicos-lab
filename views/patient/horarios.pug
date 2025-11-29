@@ -1,0 +1,37 @@
+extends ./layout_patient
+
+block content
+  h1 Horarios disponibles
+
+  p
+    strong Fecha seleccionada:
+    |  #{date}
+
+  if slots.length === 0
+    p No hay horarios disponibles para esta especialidad en esta fecha.
+    br
+    a(href="/patient/reservar-ficha") ← Volver
+
+  else
+    table(border="1" cellpadding="6")
+      thead
+        tr
+          th Hora
+          th Estado
+          th Acción
+      tbody
+        each slot in slots
+          tr
+            td= slot.time
+
+            if slot.isAvailable
+              td Disponible
+              td
+                a(href=`/patient/reservar/${slot.id}`) Reservar
+            else
+              td Ocupado
+              td
+                button(disabled) No disponible
+
+    br
+    a(href="/patient/reservar-ficha") ← Volver
