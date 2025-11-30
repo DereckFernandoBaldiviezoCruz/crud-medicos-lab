@@ -13,6 +13,7 @@ import Patient from '../models/patient.js';
 import Specialty from '../models/specialty.js';
 import User from '../models/user.js';
 import Availability from '../models/availability.js';
+import ScheduleSlot from '../models/scheduleSlot.js';
 
 const router = Router();
 
@@ -426,10 +427,42 @@ router.post('/availabilities/:id/edit', async (req, res) => {
 });
 
 
-// ELIMINAR HORARIO
+// ELIMINAR HORARIO (Availability) de forma segura
 router.get('/availabilities/:id/delete', async (req, res) => {
-  await Availability.destroy({ where: { id: req.params.id } });
-  res.redirect('/admin/availabilities');
+  const availabilityId = req.params.id;
+
+  try {
+    // 1. Buscar slots asociados
+    const slots = await ScheduleSlot.findAll({
+      where: { availabilityId }
+    });
+
+    // 2. Ver si alguno está reservado
+    const hasBooked = slots.some(s => s.status === 'booked');
+
+    if (hasBooked) {
+      // Aquí puedes renderizar una vista de error o mandar un mensaje simple
+      return res.send(
+        'No se puede eliminar este horario porque tiene fichas ya reservadas. ' +
+        'Primero debe atenderse o gestionar esas citas.'
+      );
+    }
+
+    // 3. Borrar primero los slots "available" (o todos, porque ya sabemos que no hay booked)
+    await ScheduleSlot.destroy({
+      where: { availabilityId }
+    });
+
+    // 4. Ahora sí borrar el Availability
+    await Availability.destroy({
+      where: { id: availabilityId }
+    });
+
+    res.redirect('/admin/availabilities');
+  } catch (err) {
+    console.error('Error al eliminar availability:', err);
+    res.status(500).send('Error al eliminar el horario.');
+  }
 });
 
 export default router;
