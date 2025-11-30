@@ -360,18 +360,36 @@ router.get('/availabilities/new', async (req, res) => {
   res.render('admin/availability/new', { specialties });
 });
 
-// GUARDAR HORARIO
+// GUARDAR HORARIO (permite varios días a la vez)
 router.post('/availabilities', async (req, res) => {
-  const { medicId, healthCenterId, dayOfWeek, startTime, endTime, durationMinutes } = req.body;
+  let { medicId, healthCenterId, dayOfWeek, startTime, endTime, durationMinutes } = req.body;
 
-  await Availability.create({
-    medicId,
-    healthCenterId,
-    dayOfWeek,
-    startTime,
-    endTime,
-    durationMinutes
-  });
+  // dayOfWeek puede venir como string o como array si se seleccionan varios
+  let days = [];
+
+  if (Array.isArray(dayOfWeek)) {
+    days = dayOfWeek;
+  } else if (dayOfWeek) {
+    days = [dayOfWeek];
+  }
+
+  // Por seguridad filtramos solo 1..5
+  days = days.filter(d => ['1','2','3','4','5'].includes(d));
+
+  if (days.length === 0) {
+    return res.status(400).send("Debe seleccionar al menos un día de la semana.");
+  }
+
+  for (const d of days) {
+    await Availability.create({
+      medicId,
+      healthCenterId,
+      dayOfWeek: d,
+      startTime,
+      endTime,
+      durationMinutes
+    });
+  }
 
   res.redirect('/admin/availabilities');
 });

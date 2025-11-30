@@ -27,7 +27,8 @@ block content
     br
 
     label Día de la semana:
-    select(name="dayOfWeek" required)
+    // ahora puede seleccionar varios días (Ctrl+click) o dejarlo simple con checkboxes si prefieres
+    select(name="dayOfWeek" multiple size="5" required)
       option(value="1") Lunes
       option(value="2") Martes
       option(value="3") Miércoles
