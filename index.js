@@ -18,6 +18,10 @@ import { fileURLToPath } from 'url';
 import userRoutes from './routes/user.routes.js';       // CRUD usuarios
 import patientRoutes from './routes/patient.routes.js'; // CRUD pacientes
 import medicRoutes from './routes/medic.routes.js';     // CRUD medicos
+import patientPanelRoutes from './routes/patientPanel.routes.js'; //panel paciente
+import session from 'express-session';
+
+
 
 dotenv.config();
 
@@ -25,9 +29,20 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(session({
+  secret: "super-clave-sus", 
+  resave: false,
+  saveUninitialized: false
+}));
+
+
 // Usar fileURLToPath para obtener __dirname en ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Configurar el motor de vistas PUG
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
 
 // Configura la carpeta pública para servir archivos estáticos (si tienes imágenes o CSS)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -45,7 +60,7 @@ app.get('/', (req, res) => {
 
 //LOGIN
 app.get('/auth/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'login.html')); // Asegúrate de que el archivo login.html esté en la carpeta 'views'
+  res.render('login'); // 👈 AHORA SÍ RENDERIZA PUG
 });
 //END LOGIN
 // Ruta de logout
@@ -62,6 +77,8 @@ app.get('/logout', (req, res) => {
 
 // Login (usuarios del sistema)
 app.use('/auth', authRoutes);
+
+app.use('/patient', patientPanelRoutes);
 
 // Administración (crear usuarios, pacientes, médicos, centros, especialidades)
 app.use('/admin', adminRoutes);
@@ -84,7 +101,11 @@ app.use('/users', userRoutes);
 app.use('/patients', patientRoutes);
 
 // CRUD de médicos (opcional)
-app.use('/medics', medicRoutes);
+app.use('/medics', medicRoutes);//crud de medicos desde el panel de admin
+
+// Panel del médico (citas, consulta, no show)
+app.use('/medic', medicRoutes); //vistas del medico
+
 
 // Disponibilidades y turnos
 app.use('/availabilities', availabilityRoutes);

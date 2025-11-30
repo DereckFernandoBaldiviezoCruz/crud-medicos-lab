@@ -1,0 +1,27 @@
+extends ../layout_admin
+
+block content
+  h1 Editar médico
+
+  form(action=`/admin/medics/${medic.id}/edit` method="POST")
+    div
+      label Nombre completo:
+      input(type="text" name="fullname" value=medic.User.fullname required)
+
+    div
+      label CI / Usuario:
+      input(type="text" name="username" value=medic.User.username required)
+
+    div
+      label Especialidad:
+      select(name="specialtyId" required)
+        each s in specialties
+          option(value=s.id selected=(s.id === medic.specialtyId))= s.name
+
+    div
+      label Centro de salud:
+      select(name="healthCenterId" required)
+        each c in centers
+          option(value=c.id selected=(c.id === medic.healthCenterId))= c.name
+
+    button(type="submit") Actualizar médico

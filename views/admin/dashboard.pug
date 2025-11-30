@@ -1,0 +1,22 @@
+extends layout_admin
+
+block content
+  h1 SUS - Panel del Administrador
+
+  p Administrador: #{adminName}
+
+  h2 Resumen general
+  ul
+    li Asegurados SUS registrados: #{totalPatients}
+    li Médicos activos: #{totalMedics}
+    li Centros de salud registrados: #{totalCenters}
+    li Especialidades registradas: #{totalSpecialties}
+    li Usuarios registrados: #{totalUsers}
+
+  h2 Acciones rápidas
+  ul
+    li: a(href="/admin/patients/new") ➕ Registrar nuevo asegurado SUS
+    li: a(href="/admin/medics/new") ➕ Registrar nuevo médico
+    li: a(href="/admin/specialties/new") ➕ Nueva especialidad
+    li: a(href="/admin/healthcenters/new") ➕ Nuevo centro de salud
+    li: a(href="/admin/availabilities") 🕒 Configurar horarios

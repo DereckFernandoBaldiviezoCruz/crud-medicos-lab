@@ -1,0 +1,82 @@
+extends ./layout_medic
+
+block content
+  h1 Consulta médica
+
+  p
+    | Médico:
+    strong #{medic.User.fullname}
+    |  (ejemplo)
+
+  p
+    a(href="/medic") Volver a listado de citas
+    |  | 
+    a(href="/logout") Cerrar sesión
+
+  hr
+
+  h2 Datos de la cita
+
+  p
+    strong Paciente:
+    |  #{slot.Patient.User.fullname}
+
+  p
+    strong CI:
+    |  #{slot.Patient.User.username}
+
+  p
+    strong Centro de salud:
+    |  #{medic.HealthCenter.name}
+
+  p
+    strong Especialidad:
+    |  #{medic.Specialty.name}
+
+  p
+    strong Fecha:
+    |  #{slot.date}
+
+  p
+    strong Hora:
+    |  #{slot.time}
+
+  hr
+
+  h2 Registro de consulta
+
+  form(action=`/medic/consulta/${slot.id}` method="post")
+
+    // MOTIVO
+    div
+      label Motivo de consulta:
+      textarea(
+        name="reason"
+        placeholder="Ej: Dolor de cabeza, malestar general..."
+      ) #{slot.Appointment.reason}
+
+    // SÍNTOMAS - se guardará dentro de CONSULTATION.notes
+    div
+      label Síntomas / Antecedentes:
+      textarea(
+        name="symptoms"
+        placeholder="Describa brevemente los síntomas..."
+      )
+
+    // DIAGNÓSTICO
+    div
+      label Diagnóstico:
+      textarea(
+        name="diagnosis"
+        placeholder="Diagnóstico médico (se guarda en Consultation.diagnosis)"
+      )
+
+    // NOTAS
+    div
+      label Notas / Indicaciones:
+      textarea(
+        name="notes"
+        placeholder="Notas adicionales, recomendaciones, observaciones"
+      )
+
+    button(type="submit") Guardar consulta

@@ -1,0 +1,16 @@
+extends ../layout_admin
+
+block content
+  h1 Registrar nueva especialidad
+
+  form(action="/admin/specialties" method="POST")
+    div
+      label Nombre:
+      input(type="text" name="name" required)
+
+    div
+      label Médico general:
+      input(type="checkbox" name="isGeneral")
+
+    div
+      button(type="submit") Guardar

@@ -1,0 +1,26 @@
+extends ../layout_admin
+
+block content
+  h1 Editar paciente SUS
+
+  form(action=`/admin/patients/${patient.id}/edit` method="POST")
+    div
+      label Nombre completo:
+      input(type="text" name="fullname" required value=patient.User.fullname)
+
+    div
+      label CI:
+      input(type="text" name="ci" required value=patient.User.username)
+
+    div
+      label Centro de salud:
+      select(name="healthCenterId" required)
+        each center in centers
+          option(value=center.id selected=(center.id === patient.healthCenterId))= center.name
+
+    div
+      label Observación médica:
+      textarea(name="medicalHistorySummary")= patient.medicalHistorySummary
+
+    div
+      button(type="submit") Actualizar paciente

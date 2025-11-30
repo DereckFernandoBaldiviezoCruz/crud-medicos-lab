@@ -1,0 +1,16 @@
+extends ./layout_medic
+
+block content
+  h1 ✔ Consulta registrada
+
+  p La consulta ha sido guardada correctamente.
+
+  hr
+
+  a(href="/medic")
+    button Volver al panel del médico
+
+  |  
+
+  a(href=`/medic/receta/${slotId}`)
+    button(type="button") Emitir receta

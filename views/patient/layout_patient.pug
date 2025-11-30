@@ -1,0 +1,26 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    title Sistema SUS – Pacienteoignucqiurh gtqeruhg 3
+  body
+    header
+      h2 Sistema SUS – Pacienteet je5ytvh5tj w4
+
+      if user
+        p CI: #{user.username}
+      else
+        p CI: (no disponible)
+
+      if healthCenter
+        p Centro de Salud asignado: #{healthCenter.name}
+
+      a(href="/patient/panel") ← Volver al panel
+      hr
+
+    main
+      block content
+
+    footer
+      hr
+      p © 2025 SUS

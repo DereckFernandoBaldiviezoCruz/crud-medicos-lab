@@ -12,6 +12,7 @@ const Availability = db.define('Availability', {
   dayOfWeek: { type: DataTypes.ENUM('0','1','2','3','4','5','6'), allowNull: false },
   startTime: { type: DataTypes.TIME, allowNull: false },
   endTime: { type: DataTypes.TIME, allowNull: false },
+  durationMinutes: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 15 },
   isActive: { type: DataTypes.BOOLEAN, defaultValue: true },
 }, {
   timestamps: true,

@@ -1,0 +1,45 @@
+extends ./layout_patient
+
+block content
+
+  if alert
+    div(style="background:#d1ffd1; padding:10px; border:1px solid #4caf50; margin-bottom:15px;")
+      h3= alert.title
+      p= alert.msg
+
+  if ficha
+    h2 ✔ Tienes una ficha
+    p
+      strong Fecha: 
+      | #{ficha.date}
+
+    p
+      strong Hora: 
+      | #{ficha.time}
+
+    p
+      strong Médico:
+      |  #{ficha.Availability.Medic.User.fullname}
+
+    p
+      strong Especialidad:
+      |  #{ficha.Availability.Medic.Specialty.name}
+
+    p
+      strong Centro de salud:
+      |  #{ficha.Availability.Medic.HealthCenter.name}
+
+    p Recuerda presentarte 
+      strong 15 minutos antes 
+    p de tu cita y llevar tu 
+      strong registro/afiliación del SUS.
+
+    br
+    a(href="/logout") Cerrar sesión
+  else
+    h2 No tienes ficha para hoy.
+    br
+    a(href="/patient/nueva-ficha") Sacar una ficha nueva →
+    br
+    br
+    a(href="/logout") Cerrar sesión

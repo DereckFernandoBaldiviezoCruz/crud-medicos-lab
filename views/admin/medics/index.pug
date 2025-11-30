@@ -1,0 +1,28 @@
+extends ../layout_admin
+
+block content
+  h1 Médicos registrados
+
+  a(href="/admin/medics/new") Registrar nuevo médico
+
+  table(border="1" cellpadding="6")
+    thead
+      tr
+        th ID
+        th Nombre
+        th Usuario (CI)
+        th Especialidad
+        th Centro
+        th Acciones
+    tbody
+      each m in medics
+        tr
+          td= m.id
+          td= m.User.fullname
+          td= m.User.username
+          td= m.Specialty.name
+          td= m.HealthCenter.name
+          td
+            a(href=`/admin/medics/${m.id}/edit`) Editar
+            |  |
+            a(href=`/admin/medics/${m.id}/delete`) Eliminar

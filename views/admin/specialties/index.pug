@@ -1,0 +1,24 @@
+extends ../layout_admin
+
+block content
+  h1 Especialidades registradas
+
+  a(href="/admin/specialties/new") Registrar nueva especialidad
+
+  table(border="1" cellpadding="6")
+    thead
+      tr
+        th ID
+        th Nombre
+        th ¿General?
+        th Acciones
+    tbody
+      each s in specialties
+        tr
+          td= s.id
+          td= s.name
+          td= s.isGeneral ? 'Sí' : 'No'
+          td
+            a(href=`/admin/specialties/${s.id}/edit`) Editar
+            |  |
+            a(href=`/admin/specialties/${s.id}/delete`) Eliminar

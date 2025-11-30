@@ -13,8 +13,8 @@ const Patient = db.define('Patient', {
   timestamps: true,
 });
 
-Patient.belongsTo(User, { foreignKey: 'userId' });
-User.hasOne(Patient, { foreignKey: 'userId' });
+Patient.belongsTo(User, { foreignKey: 'userId', as: 'User' });
+User.hasOne(Patient, { foreignKey: 'userId', as: 'Patient' });
 
 Patient.belongsTo(HealthCenter, { foreignKey: 'healthCenterId' });
 HealthCenter.hasMany(Patient, { foreignKey: 'healthCenterId' });

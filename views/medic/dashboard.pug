@@ -1,0 +1,79 @@
+extends ./layout_medic
+
+block content
+  h1 SUS - Panel del médico
+
+  p
+    | Médico:
+    strong #{medic.User.fullname}
+    |  (ejemplo)
+
+  p
+    | Especialidad:
+    strong #{medic.Specialty.name}
+    |  | Centro:
+    strong #{medic.HealthCenter.name}
+
+  a(href="/logout") Cerrar sesión
+
+  hr
+
+  h2 Citas agendadas para hoy
+
+  p
+    | Fecha:
+    strong #{dateStr}
+    |  (ejemplo)
+
+  if slots.length === 0
+    p No tienes citas para hoy.
+
+  else
+    table(border="1" cellpadding="6")
+      thead
+        tr
+          th Hora
+          th Paciente
+          th Motivo / Tipo
+          th Estado
+          th Acciones
+      tbody
+        each s in slots
+          tr
+            td= s.time
+            td= s.Patient.User.fullname
+
+            // MOTIVO / TIPO
+            td
+              if s.Appointment
+                | #{s.Appointment.reason || s.Appointment.type || "—"}
+              else
+                | —
+
+            // ESTADO
+            td
+              if s.Appointment
+                if s.Appointment.status === "attended"
+                  span(style="color: green; font-weight: bold") Atendida ✔
+                else if s.Appointment.status === "no_show"
+                  span(style="color: red; font-weight: bold") No se presentó ❌
+                else
+                  | Pendiente
+              else
+                | —
+
+            // ACCIONES SIEMPRE VISIBLES
+            td
+              if s.Appointment
+                if s.Appointment.status === "pending"
+                  // ACTIVOS
+                  a(href=`/medic/slot/${s.id}/attend`) Atender
+                  |  | 
+                  a(href=`/medic/slot/${s.id}/no_show`) No se presentó
+                else
+                  // BLOQUEADOS
+                  span(style="color: gray") Atender (bloqueado)
+                  |  | 
+                  span(style="color: gray") No se presentó (bloqueado)
+              else
+                | —

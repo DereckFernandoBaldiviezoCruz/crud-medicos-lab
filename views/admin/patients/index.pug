@@ -1,0 +1,36 @@
+extends ../layout_admin
+
+block content
+  h1 Pacientes SUS registrados
+
+  a(href="/admin/patients/new") Registrar nuevo paciente
+
+  table(border="1" cellpadding="6")
+    thead
+      tr
+        th ID
+        th Nombre completo
+        th CI
+        th Código acceso (Contraseña)
+        th Centro de salud
+        th Resumen médico
+        th Fecha registro
+        th Acciones
+    tbody
+      each p in patients
+        tr
+          td= p.id
+          td= p.User.fullname
+          td= p.User.username
+          td= p.User.password
+          td= p.HealthCenter ? p.HealthCenter.name : "No asignado"
+
+          // SI EL CAMPO ESTÁ VACÍO, MOSTRAR GUION
+          td= p.medicalHistorySummary || "—"
+
+          td= p.createdAt.toLocaleDateString('es-BO')
+
+          td
+            a(href=`/admin/patients/${p.id}/edit`) Editar
+            |  |
+            a(href=`/admin/patients/${p.id}/delete`) Eliminar

@@ -1,0 +1,25 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Panel del Administrador
+  body
+    // ======== SIDEBAR ========
+    aside(style="width:250px; float:left; padding:20px; border-right:1px solid #ccc;")
+      h3 Menú
+      ul
+        li: a(href="/admin") Inicio
+        li: a(href="/admin/patients") Pacientes SUS
+        li: a(href="/admin/medics") Médicos
+        li: a(href="/admin/users") Usuarios del sistema
+        li: a(href="/admin/specialties") Especialidades
+        li: a(href="/admin/healthcenters") Centros de salud
+        li: a(href="/admin/availabilities") Horarios de atención
+
+      br
+      a(href="/logout") Cerrar sesión
+
+    // ======== CONTENIDO PRINCIPAL ========
+    main(style="margin-left:270px; padding:20px;")
+      block content

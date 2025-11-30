@@ -1,0 +1,27 @@
+extends ../layout_admin
+
+block content
+  h1 Registrar nuevo médico
+
+  form(action="/admin/medics" method="POST")
+    div
+      label Nombre completo:
+      input(type="text" name="fullname" required)
+
+    div
+      label CI / Usuario:
+      input(type="text" name="username" required)
+
+    div
+      label Especialidad:
+      select(name="specialtyId" required)
+        each s in specialties
+          option(value=s.id)= s.name
+
+    div
+      label Centro de salud:
+      select(name="healthCenterId" required)
+        each c in centers
+          option(value=c.id)= c.name
+
+    button(type="submit") Registrar médico

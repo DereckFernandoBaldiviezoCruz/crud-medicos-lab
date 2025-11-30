@@ -26,7 +26,7 @@ export const createUser = async (req, res) => {
     // OJO: por ahora guardamos password en texto plano (sin bcrypt), para pruebas
     const user = await User.create({ fullname, username, password, role });
 
-    return res.status(201).json(user);
+    return res.redirect('/admin/users');
   } catch (err) {
     console.error('Error createUser:', err);
     res.status(500).json({ message: 'Error al crear usuario' });
@@ -49,7 +49,7 @@ export const createHealthCenter = async (req, res) => {
       city: city || 'Sucre',
     });
 
-    res.status(201).json(center);
+    return res.redirect('/admin/healthcenters');
   } catch (err) {
     console.error('Error createHealthCenter:', err);
     res.status(500).json({ message: 'Error al crear centro de salud' });
@@ -75,7 +75,7 @@ export const createSpecialty = async (req, res) => {
       isGeneral: !!isGeneral,
     });
 
-    res.status(201).json(specialty);
+    return res.redirect('/admin/specialties');
   } catch (err) {
     console.error('Error createSpecialty:', err);
     res.status(500).json({ message: 'Error al crear especialidad' });
@@ -83,36 +83,47 @@ export const createSpecialty = async (req, res) => {
 };
 
 // Crear paciente (asociado a un usuario y a un centro de salud)
-export const createPatient = async (req, res) => {
+// Crear paciente + usuario automáticamente
+export const registerPatient = async (req, res) => {
   try {
-    const { userId, healthCenterId, medicalHistorySummary } = req.body;
+    const { fullname, ci, healthCenterId, medicalHistorySummary } = req.body;
 
-    if (!userId || !healthCenterId) {
-      return res.status(400).json({ message: 'userId y healthCenterId son obligatorios' });
+    if (!fullname || !ci || !healthCenterId) {
+      return res.status(400).json({ message: 'Faltan datos obligatorios' });
     }
 
-    const user = await User.findByPk(userId);
-    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
-
-    if (user.role !== 'patient') {
-      return res.status(400).json({ message: 'El usuario no tiene rol patient' });
+    // Verificar si ya existe usuario con ese CI
+    const existing = await User.findOne({ where: { username: ci } });
+    if (existing) {
+      return res.status(400).json({ message: 'El CI ya está registrado como usuario' });
     }
 
-    const center = await HealthCenter.findByPk(healthCenterId);
-    if (!center) return res.status(404).json({ message: 'Centro de salud no encontrado' });
+    // Generar contraseña SUS única
+    const susCode = 'SUS-' + Math.floor(100000 + Math.random() * 900000);
 
-    const patient = await Patient.create({
-      userId,
-      healthCenterId,
-      medicalHistorySummary: medicalHistorySummary || null,
+    // Crear usuario
+    const user = await User.create({
+      fullname,
+      username: ci,
+      password: susCode,
+      role: 'patient'
     });
 
-    res.status(201).json(patient);
+    // Crear paciente
+    const patient = await Patient.create({
+      userId: user.id,
+      healthCenterId,
+      medicalHistorySummary: medicalHistorySummary || null
+    });
+
+    return res.redirect('/admin/patients');
+
   } catch (err) {
-    console.error('Error createPatient:', err);
-    res.status(500).json({ message: 'Error al crear paciente' });
+    console.error('Error registerPatient:', err);
+    res.status(500).json({ message: 'Error al registrar paciente' });
   }
 };
+
 
 // Crear médico (usuario ya debe existir con rol medic)
 export const createMedic = async (req, res) => {
@@ -142,7 +153,7 @@ export const createMedic = async (req, res) => {
       healthCenterId,
     });
 
-    res.status(201).json(medic);
+    return res.redirect('/admin/medic');
   } catch (err) {
     console.error('Error createMedic:', err);
     res.status(500).json({ message: 'Error al crear médico' });

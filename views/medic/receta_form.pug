@@ -1,0 +1,30 @@
+extends ./layout_medic
+
+block content
+  h1 Emitir receta médica
+
+  p
+    strong Paciente:
+    | #{slot.Patient.User.fullname}
+
+  p
+    strong CI:
+    | #{slot.Patient.User.username}
+
+  p
+    strong Médico:
+    | #{appointment.Medic.User.fullname}
+
+  p
+    strong Diagnóstico:
+    | #{consultation.diagnosis}
+
+  hr
+
+  h3 Contenido de la receta
+
+  form(action=`/medic/receta/${slot.id}` method="post")
+    textarea(name="content" rows="6" cols="60" placeholder="Indique medicamentos, dosis y recomendaciones...")
+
+    br
+    button(type="submit") Guardar receta

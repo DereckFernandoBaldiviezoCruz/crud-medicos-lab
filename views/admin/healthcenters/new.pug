@@ -1,0 +1,27 @@
+extends ../layout_admin
+
+block content
+  h1 Registrar nuevo centro de salud
+
+  form(action="/admin/healthcenters" method="POST")
+    div
+      label(for="name") Nombre del centro:
+      input(type="text" id="name" name="name" required)
+
+    div
+      label(for="level") Nivel del centro:
+      select(id="level" name="level" required)
+        option(value="" disabled selected) -- Seleccionar nivel --
+        option(value="I") Nivel I
+        option(value="II") Nivel II
+        option(value="III") Nivel III
+
+    div
+      label(for="address") Dirección:
+      input(type="text" id="address" name="address")
+
+    div
+      label(for="city") Ciudad:
+      input(type="text" id="city" name="city" value="Sucre")
+
+    button(type="submit") Registrar centro

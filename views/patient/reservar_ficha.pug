@@ -1,0 +1,55 @@
+extends ./layout_patient
+
+block content
+  a(href="/patient/panel") ← Volver al panel
+
+  h1 Reserva de ficha
+
+  // INFORMACIÓN DEL PACIENTE
+  p 
+    | Paciente: 
+    strong #{user.fullname}
+
+  p 
+    | Centro de salud asignado: 
+    strong #{healthCenter.name}
+
+  hr
+
+  h2 Seleccione la especialidad y la fecha
+
+  form(action="/patient/horarios" method="get")
+    
+    // ESPECIALIDADES
+    label(for="specialtyId") Especialidad:
+    select(name="specialtyId" required)
+      option(value="") -- Seleccione una opción --
+      each s in specialties
+        option(value=s.id)= s.name
+
+    br
+    br
+
+    // FECHAS DISPONIBLES (PRÓXIMOS 5 DÍAS)
+    label(for="date") Fecha de atención:
+    select(name="date" required)
+      option(value="") -- Seleccione una fecha --
+      each d in dates
+        option(value=d)= d
+
+    br
+    br
+
+    button(type="submit") Ver horarios disponibles
+
+  hr
+
+  h3 Reglas del sistema
+  ul
+    li Solo puede sacar una ficha por día.
+    li Si ya tiene ficha para hoy, no podrá reservar otra.
+    li Los horarios “Ocupado” no están disponibles.
+
+  br
+
+  a(href="/patient/panel") Cancelar

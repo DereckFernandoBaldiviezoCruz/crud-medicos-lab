@@ -1,0 +1,30 @@
+extends ../layout_admin
+
+block content
+  h1 Crear nuevo usuario del sistema
+
+  form(action="/admin/users" method="POST")
+    label Nombre completo:
+    input(type="text" name="fullname" required)
+    br
+    br
+
+    label Nombre de usuario:
+    input(type="text" name="username" required)
+    br
+    br
+
+    label Contraseña:
+    input(type="password" name="password" required)
+    br
+    br
+
+    label Rol:
+    select(name="role" required)
+      option(value="admin") Administrador
+      option(value="medic") Médico
+      option(value="patient") Paciente
+    br
+    br
+
+    button(type="submit") Crear usuario
