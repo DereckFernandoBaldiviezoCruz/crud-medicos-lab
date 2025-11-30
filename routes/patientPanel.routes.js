@@ -106,7 +106,7 @@ router.get("/nueva-ficha", async (req, res) => {
   ).values()];
 
   // fechas disponibles desde el backend
-  const dates = await getAvailableDates();
+  const dates = await getAvailableDates(paciente.healthCenterId);
 
   res.render("patient/nueva_ficha", {
     user,

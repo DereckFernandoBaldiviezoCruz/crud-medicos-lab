@@ -37,20 +37,20 @@ block content
 
   // --- SCRIPT PARA VALIDAR FECHAS PERMITIDAS ---
   script.
-    let fechasPermitidas = !{JSON.stringify(dates)}; 
-    console.log("Fechas disponibles (original):", fechasPermitidas);
-    
-    // 1) Elimina duplicados y ORDENA las fechas ascendentemente
+    let fechasPermitidas = !{JSON.stringify(dates)};
+    console.log("Fechas disponibles (antes):", fechasPermitidas);
+
+    // Quitar duplicados y ordenar
     fechasPermitidas = Array.from(new Set(fechasPermitidas)).sort();
-    
-    // 2) Min y max ya son realmente el primer y último día válidos
+    console.log("Fechas disponibles (ordenadas):", fechasPermitidas);
+
     const fechaInput = document.getElementById("fecha");
     const btn = document.getElementById("btnVerHorarios");
-    
-    fechaInput.min = fechasPermitidas[0];
-    fechaInput.max = fechasPermitidas[fechasPermitidas.length - 1];
-    
-    console.log("Fechas disponibles (ordenadas):", fechasPermitidas);
+
+    if (fechasPermitidas.length > 0) {
+      fechaInput.min = fechasPermitidas[0];
+      fechaInput.max = fechasPermitidas[fechasPermitidas.length - 1];
+    }
 
     btn.addEventListener("click", () => {
       const fecha = fechaInput.value;
