@@ -19,11 +19,11 @@ block content
 
   p
     strong Paciente:
-    |  #{slot.Patient.User.fullname}
+    |  #{patient.User.fullname}
 
   p
     strong CI:
-    |  #{slot.Patient.User.username}
+    |  #{patient.User.username}
 
   p
     strong Centro de salud:
@@ -43,6 +43,35 @@ block content
 
   hr
 
+  // 🔥 HISTORIAL DEL PACIENTE
+  h2 Historial del paciente
+
+  if consultasPrevias.length === 0 && recetasPrevias.length === 0
+    p No hay consultas ni recetas anteriores registradas para este paciente.
+  else
+    if consultasPrevias.length > 0
+      h3 Consultas anteriores
+      ul
+        each c in consultasPrevias
+          li
+            strong= c.createdAt.toLocaleDateString('es-BO')
+            |  – Dr(a). #{c.Medic.User.fullname} – Diagnóstico: #{c.diagnosis || 'N/D'}
+            if c.reason
+              br
+              | Motivo: #{c.reason}
+
+    if recetasPrevias.length > 0
+      h3 Recetas anteriores
+      ul
+        each r in recetasPrevias
+          li
+            strong= r.createdAt.toLocaleDateString('es-BO')
+            |  – Dr(a). #{r.Medic.User.fullname}
+            br
+            | #{r.content}
+
+  hr
+
   h2 Registro de consulta
 
   form(action=`/medic/consulta/${slot.id}` method="post")
@@ -53,9 +82,9 @@ block content
       textarea(
         name="reason"
         placeholder="Ej: Dolor de cabeza, malestar general..."
-      ) #{slot.Appointment.reason}
+      ) #{appointment.reason}
 
-    // SÍNTOMAS - se guardará dentro de CONSULTATION.notes
+    // SÍNTOMAS
     div
       label Síntomas / Antecedentes:
       textarea(

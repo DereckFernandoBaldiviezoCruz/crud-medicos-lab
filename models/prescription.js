@@ -7,13 +7,51 @@ import Patient from './patient.js';
 import HealthCenter from './healthCenter.js';
 
 const Prescription = db.define('Prescription', {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  date: { type: DataTypes.DATEONLY, allowNull: false },
-  content: { type: DataTypes.TEXT, allowNull: false }, // texto de la receta
+  id: { 
+    type: DataTypes.INTEGER, 
+    primaryKey: true, 
+    autoIncrement: true 
+  },
+
+  // 🔗 FK a Consultation
+  consultationId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+
+  // 🔗 FK a Medic
+  medicId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+
+  // 🔗 FK a Patient
+  patientId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+
+  // 🔗 FK a HealthCenter
+  healthCenterId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+
+  date: { 
+    type: DataTypes.DATEONLY, 
+    allowNull: false,
+    defaultValue: DataTypes.NOW 
+  },
+
+  content: { 
+    type: DataTypes.TEXT, 
+    allowNull: false 
+  }, // texto de la receta
 }, {
   timestamps: true,
 });
 
+// RELACIONES
 Prescription.belongsTo(Consultation, { foreignKey: 'consultationId' });
 Consultation.hasOne(Prescription, { foreignKey: 'consultationId' });
 

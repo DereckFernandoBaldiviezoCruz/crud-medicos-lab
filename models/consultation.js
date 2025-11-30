@@ -6,8 +6,31 @@ import Medic from './medic.js';
 import Patient from './patient.js';
 
 const Consultation = db.define('Consultation', {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  id: { 
+    type: DataTypes.INTEGER, 
+    primaryKey: true, 
+    autoIncrement: true 
+  },
 
+  // 🔗 FK a Appointment
+  appointmentId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+
+  // 🔗 FK a Medic
+  medicId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+
+  // 🔗 FK a Patient
+  patientId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+
+  // Campos de contenido
   reason: { type: DataTypes.TEXT, allowNull: true },      // Motivo de consulta
   symptoms: { type: DataTypes.TEXT, allowNull: true },    // Síntomas / antecedentes
 
@@ -17,7 +40,7 @@ const Consultation = db.define('Consultation', {
   timestamps: true,
 });
 
-
+// RELACIONES
 Consultation.belongsTo(Appointment, { foreignKey: 'appointmentId' });
 Appointment.hasOne(Consultation, { foreignKey: 'appointmentId' });
 

@@ -1,3 +1,4 @@
+// controllers/medic.controllers.js
 import Medic from "../models/medic.js";
 import ScheduleSlot from "../models/scheduleSlot.js";
 import Availability from "../models/availability.js";
@@ -7,8 +8,7 @@ import User from "../models/user.js";
 import Specialty from "../models/specialty.js";
 import HealthCenter from "../models/healthCenter.js";
 import Consultation from "../models/consultation.js";
-import Prescription from '../models/prescription.js';
-
+import Prescription from "../models/prescription.js";
 
 function nextDateForDay(weekday, start = new Date()) {
   const date = new Date(start);
@@ -35,7 +35,7 @@ export const medicDashboard = async (req, res) => {
     return res.send("Este usuario no está registrado como médico.");
   }
 
-  // 1. OBTENER DIAS DE LA SEMANA DONDE EL MEDIC TRABAJA
+  // 1. OBTENER DIAS DE LA SEMANA DONDE EL MÉDICO TRABAJA
   const availabilities = await Availability.findAll({
     where: { medicId: medic.id }
   });
@@ -60,7 +60,11 @@ export const medicDashboard = async (req, res) => {
       include: [
         { model: Availability, where: { medicId: medic.id } },
         { model: Patient, include: [{ model: User, as: "User" }] },
-        { model: Appointment, required: false, attributes: ['id', 'reason', 'type', 'status', 'date', 'time']}
+        {
+          model: Appointment,
+          required: false,
+          attributes: ["id", "reason", "type", "status", "date", "time"]
+        }
       ],
       order: [["time", "ASC"]]
     });
@@ -82,13 +86,9 @@ export const medicDashboard = async (req, res) => {
       console.log({
         slotId: s.id,
         appointmentId: s.appointmentId,
-        appointment: s.Appointment
-          ? s.Appointment.toJSON()
-          : null
+        appointment: s.Appointment ? s.Appointment.toJSON() : null
       });
     });
-
-
 
     if (slots.length > 0) {
       foundSlots = slots;
@@ -100,7 +100,6 @@ export const medicDashboard = async (req, res) => {
   // Si ningún día tiene citas, igual mostrar la próxima fecha disponible aunque esté vacía
   if (!foundSlots) {
     chosenDate = nextDateForDay(workingDays[0]);
-
     foundSlots = [];
   }
 
@@ -119,15 +118,14 @@ export const medicNoShow = async (req, res) => {
     include: [Appointment]
   });
 
-  if (!slot || !slot.Appointment)
-    return res.send("No existe la cita.");
+  if (!slot || !slot.Appointment) return res.send("No existe la cita.");
 
   await slot.Appointment.update({ status: "no_show" });
 
   res.redirect("/medic");
 };
 
-// atender (abrir formulario)
+// atender (abrir formulario + historial)
 export const medicAttend = async (req, res) => {
   const slotId = req.params.id;
 
@@ -152,11 +150,49 @@ export const medicAttend = async (req, res) => {
   console.log("🟦 CONSULTANDO SLOT PARA ATENDER:");
   console.log(JSON.stringify(slot, null, 2));
 
+  // Paciente asociado (preferimos slot.Patient, pero si no, desde Appointment)
+  const patient = slot.Patient || slot.Appointment?.Patient;
+  if (!patient) {
+    return res.send("No se encontró el paciente asociado a la cita.");
+  }
+
+  // 🔥 Consultas previas de este paciente
+  const consultasPrevias = await Consultation.findAll({
+    where: { patientId: patient.id },
+    include: [
+      {
+        model: Medic,
+        include: [User]
+      },
+      {
+        model: Appointment
+      }
+    ],
+    order: [["createdAt", "DESC"]]
+  });
+
+  // 🔥 Recetas previas de este paciente
+  const recetasPrevias = await Prescription.findAll({
+    where: { patientId: patient.id },
+    include: [
+      {
+        model: Medic,
+        include: [User]
+      },
+      {
+        model: Consultation
+      }
+    ],
+    order: [["createdAt", "DESC"]]
+  });
+
   res.render("medic/consulta_form", {
     slot,
     appointment: slot.Appointment,
-    patient: slot.Patient,
-    medic: slot.Appointment?.Medic
+    patient,
+    medic: slot.Appointment?.Medic,
+    consultasPrevias,
+    recetasPrevias
   });
 };
 
@@ -169,28 +205,26 @@ export const saveConsultation = async (req, res) => {
       include: [Appointment]
     });
 
+    if (!slot || !slot.Appointment) {
+      return res.send("No se encontró la cita asociada al horario.");
+    }
+
     const ap = slot.Appointment;
 
-    // 🟢 Actualizar motivo en Appointment (OPCIÓN A)
+    // Actualizar motivo y estado en Appointment
     ap.reason = reason;
     ap.status = "attended";
     await ap.save();
 
-    // 🟢 Guardar síntomas dentro de notes con formato profesional
-    const finalNotes = `
-[Síntomas / Antecedentes]
-${symptoms}
-
-[Notas]
-${notes}
-    `.trim();
-
+    // Crear la consulta con todos los campos (usa los nuevos campos del modelo)
     await Consultation.create({
       appointmentId: ap.id,
       medicId: ap.medicId,
       patientId: ap.patientId,
+      reason,
+      symptoms,
       diagnosis,
-      notes: finalNotes
+      notes
     });
 
     res.render("medic/consulta_guardada", {
@@ -244,29 +278,40 @@ export const medicPrescriptionForm = async (req, res) => {
 };
 
 export const savePrescription = async (req, res) => {
-  const slotId = req.params.slotId;
-  const { content } = req.body;
+  try {
+    const slotId = req.params.slotId;
+    const { content } = req.body;
 
-  const slot = await ScheduleSlot.findByPk(slotId, {
-    include: [
-      {
-        model: Appointment
-      }
-    ]
-  });
+    const slot = await ScheduleSlot.findByPk(slotId, {
+      include: [Appointment]
+    });
 
-  const consultation = await Consultation.findOne({
-    where: { appointmentId: slot.Appointment.id }
-  });
+    if (!slot || !slot.Appointment) {
+      return res.send("No se encontró la cita asociada al horario.");
+    }
 
-  await Prescription.create({
-    consultationId: consultation.id,
-    medicId: slot.Appointment.medicId,
-    patientId: slot.Appointment.patientId,
-    healthCenterId: slot.Appointment.healthCenterId,
-    date: slot.Appointment.date,
-    content
-  });
+    const ap = slot.Appointment;
 
-  res.redirect("/medic");
+    const consultation = await Consultation.findOne({
+      where: { appointmentId: ap.id }
+    });
+
+    if (!consultation) {
+      return res.send("Debe registrar primero la consulta antes de emitir una receta.");
+    }
+
+    await Prescription.create({
+      consultationId: consultation.id,
+      medicId: ap.medicId,
+      patientId: ap.patientId,
+      healthCenterId: ap.healthCenterId,
+      date: ap.date,
+      content
+    });
+
+    res.redirect("/medic");
+  } catch (err) {
+    console.error(err);
+    res.send("Error guardando receta");
+  }
 };
