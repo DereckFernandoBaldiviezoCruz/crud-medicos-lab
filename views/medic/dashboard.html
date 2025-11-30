@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Médico</title>
+</head>
+<body>
+  <h1>Bienvenido, <span id="fullname"></span></h1>
+  <p>Aquí puedes ver tus citas del día y las reconsultas.</p>
+  <a href="/appointments">Ver mis citas</a><br>
+  <a href="/logout">Cerrar sesión</a>
+
+  <script>
+    document.getElementById('fullname').textContent = 'Dr. Carlos Gómez'; // luego lo cambias dinámico
+  </script>
+</body>
+</html>

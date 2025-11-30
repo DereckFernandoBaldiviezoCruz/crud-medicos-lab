@@ -31,6 +31,9 @@ const __dirname = path.dirname(__filename);
 
 // Configura la carpeta pública para servir archivos estáticos (si tienes imágenes o CSS)
 app.use(express.static(path.join(__dirname, 'public')));
+// Configuración de vistas (Pug)
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
 
 // Ruta raíz para probar
 // ----------------------------

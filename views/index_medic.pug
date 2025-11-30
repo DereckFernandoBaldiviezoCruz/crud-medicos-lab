@@ -2,8 +2,19 @@ extends layout
 
 block content
   .container
-    h1 Bienvenido Médico
+    h1 Panel de Médico
+    p Seleccione una de las opciones para gestionar sus consultas.
+
     ul
       li
-        a(href='/appointments' class='btn btn-primary') Consultar Citas
-      // Agrega más opciones según las necesidades del médico
+        a(href='/appointments/medic' class='btn') Ver citas del día
+      li
+        a(href='/appointments/medic/all' class='btn') Ver todas mis citas
+      li
+        a(href='/consultations/medic' class='btn') Registrar consulta médica
+      li
+        a(href='/referrals/incoming' class='btn') Ver derivaciones recibidas
+      li
+        a(href='/patients' class='btn') Ver pacientes asignados
+      li
+        a(href='/logout' class='btn') Cerrar sesión
