@@ -16,7 +16,7 @@ const toMinutes = (str) => {
  * - No regenera si ya hay slots para esa fecha
  */
 export async function generateSlotsForDate(dateStr) {
-  console.log("🟦 Revisando si ya existen slots para:", dateStr);
+  console.log("🟦 Generando slots para fecha:", dateStr);
 
   // 0. Calcular día de la semana de esa fecha
   const [y, m, d] = dateStr.split("-").map(Number);
@@ -29,17 +29,7 @@ export async function generateSlotsForDate(dateStr) {
     return;
   }
 
-  // 1. Revisar si YA hay slots generados para esta fecha
-  const existing = await ScheduleSlot.findOne({ where: { date: dateStr } });
-
-  if (existing) {
-    console.log("🟩 Ya existen slots. NO se vuelve a generar.");
-    return; // No volver a generar
-  }
-
-  console.log("🟨 No existen slots → generando...");
-
-  // 2. Buscar SOLO disponibilidades activas que coincidan con el día de la semana
+  // 1. Buscar SOLO disponibilidades activas que coincidan con el día de la semana
   const availabilities = await Availability.findAll({
     where: {
       isActive: true,
@@ -54,8 +44,23 @@ export async function generateSlotsForDate(dateStr) {
     return;
   }
 
-  // 3. Generar los slots para cada disponibilidad
+  // 2. Para CADA availability, generar slots si aún no los tiene para esa fecha
   for (let a of availabilities) {
+    // ¿Ya hay slots para ESTA availability en ESTA fecha?
+    const existingForAvailability = await ScheduleSlot.findOne({
+      where: {
+        availabilityId: a.id,
+        date: dateStr
+      }
+    });
+
+    if (existingForAvailability) {
+      console.log(`🟩 Ya existen slots para availability ${a.id} en ${dateStr}, se omite.`);
+      continue;
+    }
+
+    console.log(`🟨 Generando slots para availability ${a.id} en ${dateStr}...`);
+
     let start = toMinutes(a.startTime);
     let end = toMinutes(a.endTime);
     let duration = a.durationMinutes;
@@ -69,14 +74,16 @@ export async function generateSlotsForDate(dateStr) {
         availabilityId: a.id,
         date: dateStr,
         time,
-        status: "available" // disponible; luego pasa a "booked"
+        status: "available"
       });
 
       start += duration;
     }
+
+    console.log(`🟩 Slots generados para availability ${a.id} en ${dateStr}`);
   }
 
-  console.log("🟩 Slots generados para", dateStr);
+  console.log("✅ generateSlotsForDate terminado para", dateStr);
 }
 
 /**
