@@ -45,6 +45,7 @@ router.post('/login', async (req, res) => {
     if (user.role === 'medic') {
       return res.redirect('/medic');
     }
+    router.post('/login', login);
 
     // Si no coincide ningún rol
     return res.redirect('/auth/login');
