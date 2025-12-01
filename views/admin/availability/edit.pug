@@ -1,52 +1,43 @@
 extends ../layout_admin
 
 block content
-  h1 Editar horario de atención
+  .container.mt-4
+    h1.mb-4.text-primary Editar horario de atención
 
-  form(method="POST" action=`/admin/availabilities/${availability.id}/edit`)
-
-    label Especialidad:
-    input(type="text" readonly value=availability.Medic.Specialty.name)
-    br
-
-    label Médico:
-    input(type="text" readonly value=availability.Medic.User.fullname)
-    input(type="hidden" name="medicId" value=availability.medicId)
-    br
-
-    label Centro de Salud:
-    input(type="text" readonly value=availability.HealthCenter.name)
-    input(type="hidden" name="healthCenterId" value=availability.healthCenterId)
-    br
-
-    label Día:
-    select(name="dayOfWeek" required)
-      option(value="1" selected=availability.dayOfWeek == "1") Lunes
-      option(value="2" selected=availability.dayOfWeek == "2") Martes
-      option(value="3" selected=availability.dayOfWeek == "3") Miércoles
-      option(value="4" selected=availability.dayOfWeek == "4") Jueves
-      option(value="5" selected=availability.dayOfWeek == "5") Viernes
-    br
-
-    label Hora inicio:
-    input(type="time" name="startTime" required value=availability.startTime)
-    br
-
-    label Hora fin:
-    input(type="time" name="endTime" required value=availability.endTime)
-    br
-
-    label Duración (min):
-    input(type="number" min="5" max="60" name="durationMinutes" required value=availability.durationMinutes)
-    br
-
-    label Estado:
-    select(name="isActive")
-      option(value="true" selected=availability.isActive) Activo
-      option(value="false" selected=!availability.isActive) Inactivo
-    br
-    br
-
-    button(type="submit") Guardar cambios
-    |  
-    a(href="/admin/availabilities") Cancelar
+    form(method="POST" action=`/admin/availabilities/${availability.id}/edit`)
+      .mb-3
+        label.form-label Especialidad:
+        input.form-control(type="text" readonly value=availability.Medic.Specialty.name)
+      .mb-3
+        label.form-label Médico:
+        input.form-control(type="text" readonly value=availability.Medic.User.fullname)
+        input(type="hidden" name="medicId" value=availability.medicId)
+      .mb-3
+        label.form-label Centro de Salud:
+        input.form-control(type="text" readonly value=availability.HealthCenter.name)
+        input(type="hidden" name="healthCenterId" value=availability.healthCenterId)
+      .mb-3
+        label.form-label Día:
+        select.form-select(name="dayOfWeek" required)
+          option(value="1" selected=availability.dayOfWeek == "1") Lunes
+          option(value="2" selected=availability.dayOfWeek == "2") Martes
+          option(value="3" selected=availability.dayOfWeek == "3") Miércoles
+          option(value="4" selected=availability.dayOfWeek == "4") Jueves
+          option(value="5" selected=availability.dayOfWeek == "5") Viernes
+      .mb-3
+        label.form-label Hora inicio:
+        input.form-control(type="time" name="startTime" required value=availability.startTime)
+      .mb-3
+        label.form-label Hora fin:
+        input.form-control(type="time" name="endTime" required value=availability.endTime)
+      .mb-3
+        label.form-label Duración (min):
+        input.form-control(type="number" min="5" max="60" name="durationMinutes" required value=availability.durationMinutes)
+      .mb-3
+        label.form-label Estado:
+        select.form-select(name="isActive")
+          option(value="true" selected=availability.isActive) Activo
+          option(value="false" selected=!availability.isActive) Inactivo
+      .mt-4
+        button.btn.btn-primary(type="submit") Guardar cambios
+        a.btn.btn-secondary.ms-2(href="/admin/availabilities") Cancelar

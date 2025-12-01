@@ -1,79 +1,70 @@
 extends ./layout_medic
 
 block content
-  h1 SUS - Panel del médico
+  .container.mt-4
+    h1.mb-4.text-primary SUS - Panel del médico
 
-  p
-    | Médico:
-    strong #{medic.User.fullname}
-    |  (ejemplo)
+    p.mb-2
+      | Médico: 
+      strong #{medic.User.fullname}
 
-  p
-    | Especialidad:
-    strong #{medic.Specialty.name}
-    |  | Centro:
-    strong #{medic.HealthCenter.name}
+    p.mb-2
+      | Especialidad: 
+      strong #{medic.Specialty.name} 
+      |  | Centro: 
+      strong #{medic.HealthCenter.name}
 
-  a(href="/logout") Cerrar sesión
 
-  hr
+    hr
 
-  h2 Citas agendadas para hoy
+    h2.mb-3 Citas agendadas para hoy
 
-  p
-    | Fecha:
-    strong #{dateStr}
-    |  (ejemplo)
+    p.mb-3
+      | Fecha: 
+      strong #{dateStr}
 
-  if slots.length === 0
-    p No tienes citas para hoy.
+    if slots.length === 0
+      .alert.alert-info No tienes citas para hoy.
 
-  else
-    table(border="1" cellpadding="6")
-      thead
-        tr
-          th Hora
-          th Paciente
-          th Motivo / Tipo
-          th Estado
-          th Acciones
-      tbody
-        each s in slots
+    else
+      table.table.table-striped.table-bordered
+        thead.table-dark
           tr
-            td= s.time
-            td= s.Patient.User.fullname
+            th Hora
+            th Paciente
+            th Motivo / Tipo
+            th Estado
+            th Acciones
+        tbody
+          each s in slots
+            tr
+              td= s.time
+              td= s.Patient.User.fullname
 
-            // MOTIVO / TIPO
-            td
-              if s.Appointment
-                | #{s.Appointment.reason || s.Appointment.type || "—"}
-              else
-                | —
-
-            // ESTADO
-            td
-              if s.Appointment
-                if s.Appointment.status === "attended"
-                  span(style="color: green; font-weight: bold") Atendida ✔
-                else if s.Appointment.status === "no_show"
-                  span(style="color: red; font-weight: bold") No se presentó ❌
+              td
+                if s.Appointment
+                  | #{s.Appointment.reason || s.Appointment.type || "—"}
                 else
-                  | Pendiente
-              else
-                | —
+                  | —
 
-            // ACCIONES SIEMPRE VISIBLES
-            td
-              if s.Appointment
-                if s.Appointment.status === "pending"
-                  // ACTIVOS
-                  a(href=`/medic/slot/${s.id}/attend`) Atender
-                  |  | 
-                  a(href=`/medic/slot/${s.id}/no_show`) No se presentó
+              td
+                if s.Appointment
+                  if s.Appointment.status === "attended"
+                    span.text-success.fw-bold Atendida ✔
+                  else if s.Appointment.status === "no_show"
+                    span.text-danger.fw-bold No se presentó ❌
+                  else
+                    span.text-warning Pendiente
                 else
-                  // BLOQUEADOS
-                  span(style="color: gray") Atender (bloqueado)
-                  |  | 
-                  span(style="color: gray") No se presentó (bloqueado)
-              else
-                | —
+                  | —
+
+              td
+                if s.Appointment
+                  if s.Appointment.status === "pending"
+                    a.btn.btn-success.btn-sm.me-1(href=`/medic/slot/${s.id}/attend`) Atender
+                    a.btn.btn-warning.btn-sm(href=`/medic/slot/${s.id}/no_show`) No se presentó
+                  else
+                    span.text-muted.me-1 Atender (bloqueado)
+                    span.text-muted No se presentó (bloqueado)
+                else
+                  | —

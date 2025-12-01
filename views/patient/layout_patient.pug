@@ -2,25 +2,80 @@ doctype html
 html(lang="es")
   head
     meta(charset="UTF-8")
-    title Sistema SUS – Pacienteoignucqiurh gtqeruhg 3
-  body
-    header
-      h2 Sistema SUS – Pacienteet je5ytvh5tj w4
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Sistema SUS – Paciente
 
-      if user
-        p CI: #{user.username}
-      else
-        p CI: (no disponible)
+    // Bootstrap 5 CSS
+    link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css")
+    link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css")
 
-      if healthCenter
-        p Centro de Salud asignado: #{healthCenter.name}
+  body(class="bg-light")
 
-      a(href="/patient/panel") ← Volver al panel
-      hr
+    // ======== HEADER ========
+    header(class="bg-primary text-white p-3 mb-4")
+      .container
+        .d-flex.justify-content-between.align-items-center
 
+          // ---- Info del usuario ----
+          .user-info
+            h2.mb-1 Sistema SUS – Paciente
+
+            if user
+              p.mb-1 CI: #{user.username}
+            else
+              p.mb-1 CI: (no disponible)
+
+            if healthCenter
+              p.mb-0 Centro de Salud asignado: #{healthCenter.name}
+
+          // ---- Botones del menú ----
+          .menu-buttons
+            a.btn.btn-light.me-2(href="/patient/panel") Panel Principal
+            a.btn.btn-danger(href="/logout") Cerrar Sesión
+
+    // ======== CONTENIDO ========
     main
-      block content
+      .container
+        block content
 
-    footer
-      hr
-      p © 2025 SUS
+    // ======== FOOTER ========
+    footer(class="bg-dark text-white py-4 mt-5")
+      .container
+        .row
+
+          // ---- Columna de información ----
+          .col-md-4.mb-3
+            img(src="/img/sus-logo.png" alt="Logo SUS" class="mb-2" style="max-width:200px;")
+            p.mb-0 © 2025 Sistema Único de Salud
+            small.text-muted.text-white-50 Todos los derechos reservados
+
+          // ---- Columna de enlaces ----
+          .col-md-4.mb-3.text-md-center
+            h5 Enlaces útiles
+            ul.list-unstyled
+              li
+                a.text-white.text-decoration-none(href="/about")
+                  i(class="bi bi-info-circle me-2") Información
+              li
+                a.text-white.text-decoration-none(href="/contact")
+                  i(class="bi bi-envelope me-2") Contacto
+              li
+                a.text-white.text-decoration-none(href="/help")
+                  i(class="bi bi-question-circle me-2") Ayuda
+
+          // ---- Columna de redes sociales ----
+          .col-md-4.mb-3.text-md-end
+            h5 Síguenos
+            a.text-white.me-3(href="https://facebook.com" target="_blank")
+              i(class="bi bi-facebook fs-4")
+            a.text-white.me-3(href="https://twitter.com" target="_blank")
+              i(class="bi bi-twitter fs-4")
+            a.text-white.me-3(href="https://instagram.com" target="_blank")
+              i(class="bi bi-instagram fs-4")
+
+      hr(class="border-secondary mt-4")
+      p.text-center.text-white-50.mb-0 Hecho en Bolivia
+
+
+    // Bootstrap JS
+    script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js")

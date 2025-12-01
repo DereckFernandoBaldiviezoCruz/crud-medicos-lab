@@ -1,28 +1,29 @@
 extends ../layout_admin
 
 block content
-  h1 Médicos registrados
+  .container.mt-4
+    h1.mb-4.text-primary Médicos registrados
 
-  a(href="/admin/medics/new") Registrar nuevo médico
+    a.btn.btn-success.mb-3(href="/admin/medics/new") Registrar nuevo médico
 
-  table(border="1" cellpadding="6")
-    thead
-      tr
-        th ID
-        th Nombre
-        th Usuario (CI)
-        th Especialidad
-        th Centro
-        th Acciones
-    tbody
-      each m in medics
+
+    table.table.table-striped.table-bordered.table-hover
+      thead.table-dark
         tr
-          td= m.id
-          td= m.User.fullname
-          td= m.User.username
-          td= m.Specialty.name
-          td= m.HealthCenter.name
-          td
-            a(href=`/admin/medics/${m.id}/edit`) Editar
-            |  |
-            a(href=`/admin/medics/${m.id}/delete`) Eliminar
+          th ID
+          th Nombre
+          th Usuario (CI)
+          th Especialidad
+          th Centro
+          th Acciones
+      tbody
+        each m in medics
+          tr
+            td= m.id
+            td= m.User.fullname
+            td= m.User.username
+            td= m.Specialty.name
+            td= m.HealthCenter.name
+            td
+              a.btn.btn-sm.btn-primary.me-1(href=`/admin/medics/${m.id}/edit`) Editar
+              a.btn.btn-sm.btn-danger(href=`/admin/medics/${m.id}/delete`) Eliminar

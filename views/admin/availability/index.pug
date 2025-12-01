@@ -1,38 +1,39 @@
 extends ../layout_admin
 
 block content
-  h1 Horarios de atención
+  .container.mt-4
+    h1.mb-4.text-primary Horarios de atención
 
-  a(href="/admin/availabilities/new") Registrar nuevo horario
+    a.btn.btn-success.mb-3(href="/admin/availabilities/new") ➕ Registrar nuevo horario
 
-  table(border="1" cellpadding="6")
-    thead
-      tr
-        th ID
-        th Médico
-        th Especialidad
-        th Centro
-        th Día
-        th Inicio
-        th Fin
-        th Duración (min)
-        th Estado
-        th Acciones
-    tbody
-      each a in availabilities
+    table.table.table-striped.table-bordered.table-hover
+      thead.table-dark
         tr
-          td= a.id
-          td= a.Medic.User.fullname
-          td= a.Medic.Specialty.name
-          td= a.HealthCenter.name
-          td 
-            - const days = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"]
-            = days[a.dayOfWeek]
-          td= a.startTime
-          td= a.endTime
-          td= a.durationMinutes
-          td= a.isActive ? "Activo" : "Inactivo"
-          td
-            a(href=`/admin/availabilities/${a.id}/edit`) Editar
-            |  | 
-            a(href=`/admin/availabilities/${a.id}/delete`) Eliminar
+          th ID
+          th Médico
+          th Especialidad
+          th Centro
+          th Día
+          th Inicio
+          th Fin
+          th Duración (min)
+          th Estado
+          th Acciones
+      tbody
+        each a in availabilities
+          tr
+            td= a.id
+            td= a.Medic.User.fullname
+            td= a.Medic.Specialty.name
+            td= a.HealthCenter.name
+            td
+              - const days = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"]
+              = days[a.dayOfWeek]
+            td= a.startTime
+            td= a.endTime
+            td= a.durationMinutes
+            td
+              span(class=a.isActive ? 'text-success fw-bold' : 'text-danger fw-bold')= a.isActive ? 'Activo' : 'Inactivo'
+            td
+              a.btn.btn-sm.btn-primary.me-1(href=`/admin/availabilities/${a.id}/edit`) Editar
+              a.btn.btn-sm.btn-danger(href=`/admin/availabilities/${a.id}/delete`) Eliminar

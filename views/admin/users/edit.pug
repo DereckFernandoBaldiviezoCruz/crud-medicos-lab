@@ -1,29 +1,23 @@
 extends ../layout_admin
 
 block content
-  h1 Editar usuario
+  .container.mt-4
+    h1.mb-4.text-primary Editar usuario
 
-  form(action=`/admin/users/${user.id}/edit` method="POST")
-    label Nombre completo:
-    input(type="text" name="fullname" value=user.fullname required)
-    br
-    br
+    form(action=`/admin/users/${user.id}/edit` method="POST")
+      .mb3
+        label.form-label Nombre completo:
+        input.form-control(type="text" name="fullname" value=user.fullname required)
+      .mb3
+        label.form-label Nombre de usuario:
+        input.form-control(type="text" name="username" value=user.username required)
+      .mb3
+        label.form-label Rol:
+        select.form-select(name="role" required)
+          option(value="admin" selected=user.role==='admin') Administrador
+          option(value="medic" selected=user.role==='medic') Médico
+          option(value="patient" selected=user.role==='patient') Paciente
 
-    label Nombre de usuario:
-    input(type="text" name="username" value=user.username required)
-    br
-    br
+      button.btn.btn-primary(type="submit") Guardar cambios
 
-    label Rol:
-    select(name="role" required)
-      option(value="admin" selected=user.role==='admin') Administrador
-      option(value="medic" selected=user.role==='medic') Médico
-      option(value="patient" selected=user.role==='patient') Paciente
-
-    br
-    br
-
-    button(type="submit") Guardar cambios
-
-  br
-  a(href="/admin/users") ← Volver
+    a(href="/admin/users") ← Volver

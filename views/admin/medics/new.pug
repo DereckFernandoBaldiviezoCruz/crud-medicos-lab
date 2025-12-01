@@ -1,27 +1,28 @@
 extends ../layout_admin
 
 block content
-  h1 Registrar nuevo médico
+  .container.mt-4
+    h1.mb-4.text-primary Registrar nuevo médico
 
-  form(action="/admin/medics" method="POST")
-    div
-      label Nombre completo:
-      input(type="text" name="fullname" required)
+    form(action="/admin/medics" method="POST")
+      div
+        label.form-label Nombre completo:
+        input.form-control(type="text" name="fullname" required)
 
-    div
-      label CI / Usuario:
-      input(type="text" name="username" required)
+      div
+        label.form-label CI / Usuario:
+        input.form-control(type="text" name="username" required)
 
-    div
-      label Especialidad:
-      select(name="specialtyId" required)
-        each s in specialties
-          option(value=s.id)= s.name
+      div
+        label.form-label Especialidad:
+        select.form-select(name="specialtyId" required)
+          each s in specialties
+            option(value=s.id)= s.name
 
-    div
-      label Centro de salud:
-      select(name="healthCenterId" required)
-        each c in centers
-          option(value=c.id)= c.name
+      div
+        label.form-label Centro de salud:
+        select.form-select(name="healthCenterId" required)
+          each c in centers
+            option(value=c.id)= c.name
 
-    button(type="submit") Registrar médico
+      button.btn.btn-primary(type="submit") Registrar médico

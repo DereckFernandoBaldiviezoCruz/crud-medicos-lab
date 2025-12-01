@@ -1,26 +1,27 @@
 extends ../layout_admin
 
 block content
-  h1 Registrar nuevo paciente SUS
+  .container.mt-4
+    h1.mb-4.text-primary Registrar nuevo paciente SUS
 
-  form(action="/admin/patients" method="POST")
-    div
-      label Nombre completo:
-      input(type="text" name="fullname" required)
+    form(action="/admin/patients" method="POST")
+      .mb-3
+        label.form-label Nombre completo:
+        input.form-control(type="text" name="fullname" required)
 
-    div
-      label CI:
-      input(type="text" name="ci" required)
+      .mb-3
+        label.form-label CI:
+        input.form-control(type="text" name="ci" required)
 
-    div
-      label Centro de salud:
-      select(name="healthCenterId" required)
-        each center in centers
-          option(value=center.id)= center.name
+      .mb-3
+        label.form-label Centro de salud:
+        select.form-select(name="healthCenterId" required)
+          each center in centers
+            option(value=center.id)= center.name
 
-    div
-      label Observación médica:
-      textarea(name="medicalHistorySummary")
+      .mb-3
+        label.form-label Observación médica:
+        textarea.form-control(name="medicalHistorySummary")
 
-    div
-      button(type="submit") Registrar
+      .mb-3
+        button.btn.btn-primary(type="submit") Registrar

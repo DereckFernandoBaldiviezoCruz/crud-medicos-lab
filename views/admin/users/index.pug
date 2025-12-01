@@ -1,17 +1,17 @@
 extends ../layout_admin
 
 block content
-  h1 Usuarios del sistema
+  .container.mt-4
+    h1.mb-4.text-primary Usuarios del sistema
 
-  a(href="/admin/users/new") ➕ Crear nuevo usuario
-  br
-  br
+    a.btn.btn-success.mb-3(href="/admin/users/new") ➕ Crear nuevo usuario
 
-  if users.length === 0
-    p No hay usuarios registrados.
-  else
-    table(border="1" cellpadding="8")
-      thead
+    if users.length === 0
+      p No hay usuarios registrados.
+    else
+
+    table.table.table-striped.table-bordered.table-hover
+      thead.table-dark
         tr
           th ID
           th Nombre
@@ -27,6 +27,5 @@ block content
             td= user.username
             td= user.role
             td
-              a(href=`/admin/users/${user.id}/edit`) ✏ Editar
-              |  
-              a(href=`/admin/users/${user.id}/delete`) ❌ Eliminar
+              a.btn.btn-sm.btn-primary.me-1(href=`/admin/users/${user.id}/edit`) ✏ Editar
+              a.btn.btn-sm.btn-danger(href=`/admin/users/${user.id}/delete`) ❌ Eliminar

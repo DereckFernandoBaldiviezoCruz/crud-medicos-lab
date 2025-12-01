@@ -49,4 +49,46 @@ body {
     min-height: 100vh;
     transition: all 0.3s;
   }
-  
+  /* Estilos personalizados para la tabla de Horarios de Atención */
+
+.table-hover tbody tr:hover {
+  background-color: #f1f1f1;
+  transition: background-color 0.3s ease;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #f9f9f9;
+}
+
+.table-bordered th, .table-bordered td {
+  border: 1px solid #dee2e6 !important;
+}
+
+.table-dark th {
+  background-color: #343a40 !important;
+  color: #fff;
+}
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.text-success {
+  color: #198754 !important;
+}
+
+.text-danger {
+  color: #dc3545 !important;
+}
+
+.fw-bold {
+  font-weight: 700 !important;
+}
+
+/* Ajustes de responsividad */
+@media (max-width: 768px) {
+  .table-responsive {
+    overflow-x: auto;
+  }
+}

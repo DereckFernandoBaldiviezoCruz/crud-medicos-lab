@@ -1,16 +1,17 @@
 extends ../layout_admin
 
 block content
-  h1 Editar especialidad
+  .container.mt-4
+    h1.mb-4.text-primary Editar especialidad
 
-  form(action=`/admin/specialties/${specialty.id}/edit` method="POST")
-    div
-      label Nombre:
-      input(type="text" name="name" value=specialty.name required)
+    form(action=`/admin/specialties/${specialty.id}/edit` method="POST")
+      div
+        label.form-label Nombre:
+        input.form-control(type="text" name="name" value=specialty.name required)
 
-    div
-      label Médico general:
-      input(type="checkbox" name="isGeneral" checked=specialty.isGeneral)
+      div
+        label.form-label Médico general:
+        input.form-control(type="checkbox" name="isGeneral" checked=specialty.isGeneral)
 
-    div
-      button(type="submit") Actualizar
+      div
+        button.btn.btn-primary(type="submit") Actualizar

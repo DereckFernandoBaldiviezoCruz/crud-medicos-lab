@@ -1,26 +1,27 @@
 extends ../layout_admin
 
 block content
-  h1 Editar centro de salud
+  .container.mt-4
+    h1.mb-4.text-primary Editar centro de salud
 
-  form(action=`/admin/healthcenters/${center.id}/edit` method="POST")
-    div
-      label(for="name") Nombre:
-      input(type="text" name="name" id="name" required value=center.name)
+    form(action=`/admin/healthcenters/${center.id}/edit` method="POST")
+      .mb3
+        label.form-label(for="name") Nombre:
+        input.form-control(type="text" name="name" id="name" required value=center.name)
 
-    div
-      label(for="level") Nivel:
-      select(name="level" id="level" required)
-        option(value="I" selected=(center.level === "I")) Nivel I
-        option(value="II" selected=(center.level === "II")) Nivel II
-        option(value="III" selected=(center.level === "III")) Nivel III
+      .mb3
+        label.form-label(for="level") Nivel:
+        select.form-select(name="level" id="level" required)
+          option(value="I" selected=(center.level === "I")) Nivel I
+          option(value="II" selected=(center.level === "II")) Nivel II
+          option(value="III" selected=(center.level === "III")) Nivel III
 
-    div
-      label(for="address") Dirección:
-      input(type="text" name="address" id="address" value=center.address)
+      .mb3
+        label.form-label(for="address") Dirección:
+        input.form-control(type="text" name="address" id="address" value=center.address)
 
-    div
-      label(for="city") Ciudad:
-      input(type="text" name="city" id="city" value=center.city)
+      .mb3
+        label.form-label(for="city") Ciudad:
+        input.form-control(type="text" name="city" id="city" value=center.city)
 
-    button(type="submit") Actualizar centro
+      button.btn.btn-primary(type="submit") Actualizar centro

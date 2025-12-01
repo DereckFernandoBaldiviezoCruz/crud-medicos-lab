@@ -1,12 +1,12 @@
 extends ../layout_admin
 
 block content
-  h1 Centros de salud registrados
+  h1.mb-4.text-primary Centros de salud registrados
 
-  a(href="/admin/healthcenters/new") Registrar nuevo centro
+  a.btn.btn-success.mb-3(href="/admin/healthcenters/new") Registrar nuevo centro
 
-  table(border="1" cellpadding="6")
-    thead
+  table.table.table-striped.table-bordered.table-hover
+    thead.table-dark
       tr
         th ID
         th Nombre
@@ -23,6 +23,5 @@ block content
           td= center.address
           td= center.city
           td
-            a(href=`/admin/healthcenters/${center.id}/edit`) Editar
-            |  |
-            a(href=`/admin/healthcenters/${center.id}/delete`) Eliminar
+            a.btn.btn-sm.btn-primary.me-1(href=`/admin/healthcenters/${center.id}/edit`) Editar
+            a.btn.btn-sm.btn-danger(href=`/admin/healthcenters/${center.id}/delete`) Eliminar

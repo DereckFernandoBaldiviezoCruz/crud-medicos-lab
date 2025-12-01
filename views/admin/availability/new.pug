@@ -1,57 +1,50 @@
 extends ../layout_admin
 
 block content
-  h1 Registrar nuevo horario
+  .container.mt-4
+    h1.mb-4.text-primary Registrar nuevo horario
 
-  form(method="POST" action="/admin/availabilities")
-    
-    label Especialidad:
-    select(name="specialtyId" id="specialtySelect" required)
-      option(value="") Seleccione una especialidad
-      each s in specialties
-        option(value=s.id)= s.name
+    form(method="POST" action="/admin/availabilities")
+      .mb-3
+        label.form-label Especialidad:
+        select.form-select(name="specialtyId" id="specialtySelect" required)
+          option(value="") Seleccione una especialidad
+          each s in specialties
+            option(value=s.id)= s.name
 
-    br
+      .mb-3
+        label.form-label Médico:
+        select.form-select(name="medicId" id="medicSelect" required disabled)
+          option(value="") Seleccione una especialidad primero
 
-    label Médico:
-    select(name="medicId" id="medicSelect" required disabled)
-      option(value="") Seleccione una especialidad primero
+      .mb-3
+        label.form-label Centro de Salud (automático):
+        input.form-control(type="text" id="centerName" readonly)
+        input(type="hidden" id="centerId" name="healthCenterId")
 
-    br 
+      .mb-3
+        label.form-label Día de la semana:
+        select.form-select(name="dayOfWeek" multiple size="5" required)
+          option(value="1") Lunes
+          option(value="2") Martes
+          option(value="3") Miércoles
+          option(value="4") Jueves
+          option(value="5") Viernes
 
-    label Centro de Salud (automático):
-    input(type="text" id="centerName" readonly)
+      .mb-3
+        label.form-label Hora de inicio:
+        input.form-control(type="time" name="startTime" required)
 
-    input(type="hidden" id="centerId" name="healthCenterId")
+      .mb-3
+        label.form-label Hora de fin:
+        input.form-control(type="time" name="endTime" required)
 
-    br
+      .mb-3
+        label.form-label Duración de cita (minutos):
+        input.form-control(type="number" name="durationMinutes" min="5" max="60" value="15" required)
 
-    label Día de la semana:
-    // ahora puede seleccionar varios días (Ctrl+click) o dejarlo simple con checkboxes si prefieres
-    select(name="dayOfWeek" multiple size="5" required)
-      option(value="1") Lunes
-      option(value="2") Martes
-      option(value="3") Miércoles
-      option(value="4") Jueves
-      option(value="5") Viernes
-
-    br
-
-    label Hora de inicio:
-    input(type="time" name="startTime" required)
-
-    br
-
-    label Hora de fin:
-    input(type="time" name="endTime" required)
-
-    br
-    
-    label Duración de cita (minutos):
-    input(type="number" name="durationMinutes" min="5" max="60" value="15" required)
-
-    br
-    button(type="submit") Guardar
+      .mt-4
+        button.btn.btn-primary(type="submit") Guardar
 
   script.
     const specialtySelect = document.getElementById("specialtySelect");

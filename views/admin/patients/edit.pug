@@ -1,26 +1,27 @@
 extends ../layout_admin
 
 block content
-  h1 Editar paciente SUS
+  .container.mt-4
+    h1.mb-4.text-primary Editar paciente SUS
 
-  form(action=`/admin/patients/${patient.id}/edit` method="POST")
-    div
-      label Nombre completo:
-      input(type="text" name="fullname" required value=patient.User.fullname)
+    form(action=`/admin/patients/${patient.id}/edit` method="POST")
+      .mb3
+        label.form-label Nombre completo:
+        input.form-control(type="text" name="fullname" required value=patient.User.fullname)
 
-    div
-      label CI:
-      input(type="text" name="ci" required value=patient.User.username)
+      .mb3
+        label.form-label CI:
+        input.form-control(type="text" name="ci" required value=patient.User.username)
 
-    div
-      label Centro de salud:
-      select(name="healthCenterId" required)
-        each center in centers
-          option(value=center.id selected=(center.id === patient.healthCenterId))= center.name
+      .mb3
+        label.form-label Centro de salud:
+        select.form-select(name="healthCenterId" required)
+          each center in centers
+            option(value=center.id selected=(center.id === patient.healthCenterId))= center.name
 
-    div
-      label Observación médica:
-      textarea(name="medicalHistorySummary")= patient.medicalHistorySummary
+      .mb3
+        label.form-label Observación médica:
+        textarea.form-control(name="medicalHistorySummary")= patient.medicalHistorySummary
 
-    div
-      button(type="submit") Actualizar paciente
+      .mb3
+        button.btn.btn-primary(type="submit") Actualizar paciente

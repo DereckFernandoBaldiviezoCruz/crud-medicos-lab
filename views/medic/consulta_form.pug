@@ -1,111 +1,86 @@
 extends ./layout_medic
 
 block content
-  h1 Consulta médica
+  .container.mt-4
+    h1.mb-4.text-primary Consulta médica
 
-  p
-    | Médico:
-    strong #{medic.User.fullname}
-    |  (ejemplo)
+    p.mb-2
+      | Médico: 
+      strong #{medic.User.fullname}
 
-  p
-    a(href="/medic") Volver a listado de citas
-    |  | 
-    a(href="/logout") Cerrar sesión
+    p.mb-3
+      a.btn.btn-secondary.me-2(href="/medic") Volver a listado de citas
 
-  hr
+    hr
 
-  h2 Datos de la cita
+    h2.mb-3 Datos de la cita
 
-  p
-    strong Paciente:
-    |  #{patient.User.fullname}
+    p.mb-1
+      strong Paciente: 
+      | #{patient.User.fullname}
+    p.mb-1
+      strong CI: 
+      | #{patient.User.username}
+    p.mb-1
+      strong Centro de salud: 
+      | #{medic.HealthCenter.name}
+    p.mb-1
+      strong Especialidad: 
+      | #{medic.Specialty.name}
+    p.mb-1
+      strong Fecha: 
+      | #{slot.date}
+    p.mb-3
+      strong Hora: 
+      | #{slot.time}
 
-  p
-    strong CI:
-    |  #{patient.User.username}
+    hr
 
-  p
-    strong Centro de salud:
-    |  #{medic.HealthCenter.name}
+    h2.mb-3 Historial del paciente
 
-  p
-    strong Especialidad:
-    |  #{medic.Specialty.name}
+    if consultasPrevias.length === 0 && recetasPrevias.length === 0
+      .alert.alert-info No hay consultas ni recetas anteriores registradas para este paciente.
+    else
+      if consultasPrevias.length > 0
+        h3.mb-2 Consultas anteriores
+        ul.list-group.mb-3
+          each c in consultasPrevias
+            li.list-group-item
+              strong= c.createdAt.toLocaleDateString('es-BO')
+              |  – Dr(a). #{c.Medic.User.fullname} – Diagnóstico: #{c.diagnosis || 'N/D'}
+              if c.reason
+                br
+                | Motivo: #{c.reason}
 
-  p
-    strong Fecha:
-    |  #{slot.date}
-
-  p
-    strong Hora:
-    |  #{slot.time}
-
-  hr
-
-  // 🔥 HISTORIAL DEL PACIENTE
-  h2 Historial del paciente
-
-  if consultasPrevias.length === 0 && recetasPrevias.length === 0
-    p No hay consultas ni recetas anteriores registradas para este paciente.
-  else
-    if consultasPrevias.length > 0
-      h3 Consultas anteriores
-      ul
-        each c in consultasPrevias
-          li
-            strong= c.createdAt.toLocaleDateString('es-BO')
-            |  – Dr(a). #{c.Medic.User.fullname} – Diagnóstico: #{c.diagnosis || 'N/D'}
-            if c.reason
+      if recetasPrevias.length > 0
+        h3.mb-2 Recetas anteriores
+        ul.list-group.mb-3
+          each r in recetasPrevias
+            li.list-group-item
+              strong= r.createdAt.toLocaleDateString('es-BO')
+              |  – Dr(a). #{r.Medic.User.fullname}
               br
-              | Motivo: #{c.reason}
+              | #{r.content}
 
-    if recetasPrevias.length > 0
-      h3 Recetas anteriores
-      ul
-        each r in recetasPrevias
-          li
-            strong= r.createdAt.toLocaleDateString('es-BO')
-            |  – Dr(a). #{r.Medic.User.fullname}
-            br
-            | #{r.content}
+    hr
 
-  hr
+    h2.mb-3 Registro de consulta
 
-  h2 Registro de consulta
+    form(action=`/medic/consulta/${slot.id}` method="post")
+      .mb-3
+        label.form-label Motivo de consulta:
+        textarea.form-control(name="reason" placeholder="Ej: Dolor de cabeza, malestar general...") #{appointment.reason}
 
-  form(action=`/medic/consulta/${slot.id}` method="post")
+      .mb-3
+        label.form-label Síntomas / Antecedentes:
+        textarea.form-control(name="symptoms" placeholder="Describa brevemente los síntomas...")
 
-    // MOTIVO
-    div
-      label Motivo de consulta:
-      textarea(
-        name="reason"
-        placeholder="Ej: Dolor de cabeza, malestar general..."
-      ) #{appointment.reason}
+      .mb-3
+        label.form-label Diagnóstico:
+        textarea.form-control(name="diagnosis" placeholder="Diagnóstico médico (se guarda en Consultation.diagnosis)")
 
-    // SÍNTOMAS
-    div
-      label Síntomas / Antecedentes:
-      textarea(
-        name="symptoms"
-        placeholder="Describa brevemente los síntomas..."
-      )
+      .mb-3
+        label.form-label Notas / Indicaciones:
+        textarea.form-control(name="notes" placeholder="Notas adicionales, recomendaciones, observaciones")
 
-    // DIAGNÓSTICO
-    div
-      label Diagnóstico:
-      textarea(
-        name="diagnosis"
-        placeholder="Diagnóstico médico (se guarda en Consultation.diagnosis)"
-      )
-
-    // NOTAS
-    div
-      label Notas / Indicaciones:
-      textarea(
-        name="notes"
-        placeholder="Notas adicionales, recomendaciones, observaciones"
-      )
-
-    button(type="submit") Guardar consulta
+      button.btn.btn-primary(type="submit") Guardar consulta

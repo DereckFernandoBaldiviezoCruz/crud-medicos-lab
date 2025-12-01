@@ -2,44 +2,56 @@ extends ./layout_patient
 
 block content
 
-  if alert
-    div(style="background:#d1ffd1; padding:10px; border:1px solid #4caf50; margin-bottom:15px;")
-      h3= alert.title
-      p= alert.msg
+  .container.mt-4
+    .row.justify-content-center
+      .col-md-8
 
-  if ficha
-    h2 ✔ Tienes una ficha
-    p
-      strong Fecha: 
-      | #{ficha.date}
+        // Mensaje de alerta
+        if alert
+          .alert.alert-success(role="alert")
+            h4.alert-heading= alert.title
+            p= alert.msg
 
-    p
-      strong Hora: 
-      | #{ficha.time}
+        // Si tiene ficha
+        if ficha
+          .card.shadow-sm
+            .card-body
 
-    p
-      strong Médico:
-      |  #{ficha.Availability.Medic.User.fullname}
+              h2.text-success.mb-4 ✔ Tienes una ficha
 
-    p
-      strong Especialidad:
-      |  #{ficha.Availability.Medic.Specialty.name}
+              p.mb-2
+                strong Fecha: 
+                |  #{ficha.date}
 
-    p
-      strong Centro de salud:
-      |  #{ficha.Availability.Medic.HealthCenter.name}
+              p.mb-2
+                strong Hora:
+                |  #{ficha.time}
 
-    p Recuerda presentarte 
-      strong 15 minutos antes 
-    p de tu cita y llevar tu 
-      strong registro/afiliación del SUS.
+              p.mb-2
+                strong Médico:
+                |  #{ficha.Availability.Medic.User.fullname}
 
-    br
-    a(href="/logout") Cerrar sesión
-  else
-    h2 No tienes ficha para hoy.
-    br
-    a(href="/patient/nueva-ficha") Sacar una ficha nueva →
-    br
-    br
-    a(href="/logout") Cerrar sesión
+              p.mb-2
+                strong Especialidad:
+                |  #{ficha.Availability.Medic.Specialty.name}
+
+              p.mb-2
+                strong Centro de salud:
+                |  #{ficha.Availability.Medic.HealthCenter.name}
+
+              .mt-3
+                p Recuerda presentarte 
+                  strong 15 minutos antes 
+                p de tu cita y llevar tu 
+                  strong registro/afiliación del SUS.
+
+
+        else
+          .card.shadow-sm
+            .card-body.text-center
+
+              h2.text-danger.mb-3 No tienes ficha para hoy.
+
+              a.btn.btn-primary.w-100(href="/patient/nueva-ficha") Sacar una ficha nueva →
+              br
+              br

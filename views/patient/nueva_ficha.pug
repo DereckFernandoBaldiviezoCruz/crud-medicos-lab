@@ -1,31 +1,50 @@
 extends ./layout_patient
 
 block content
-  h1 Reserva de ficha
+  h1.text-primary.mb-4 Reserva de ficha
 
-  // Datos del paciente arriba (layout ya los imprime)
+  link(rel="stylesheet", href="/css/reserva.css")
 
-  // SELECCIÓN DE ESPECIALIDAD
+  style.
+    /* Hover sobre días disponibles */
+    .calendar td.disponible:hover {
+      background-color: #cce5ff;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    /* Día seleccionado */
+    .calendar td.seleccionado {
+      background-color: #0d6efd !important;
+      color: white !important;
+      font-weight: bold;
+      border-radius: 4px;
+    }
+
+    /* Fechas NO permitidas en rojo */
+    .calendar td.no-disponible {
+      background-color: #f8d7da !important;
+      color: #842029 !important;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
   h3 1. Seleccione la especialidad
-
-  select#specialty(name="specialtyId" required)
-    option(value="") -- Seleccione una opción --
-    each esp in specialties
-      option(value=esp.id)= esp.name
+  .mb-3
+    select#specialty.form-select(name="specialtyId" required)
+      option(value="") -- Seleccione una opción --
+      each esp in specialties
+        option(value=esp.id)= esp.name
 
   br
-  br
 
-  // SELECCIÓN DE FECHA
   h3 2. Seleccione la fecha de atención
 
-  label(for="fecha") Fecha:
-  input#fecha(type="date" name="date" required)
+  // Calendario dinámico
+  #calendar-container
 
   br
-  br
-
-  button#btnVerHorarios Ver horarios disponibles
+  button#btnVerHorarios.btn.btn-primary.mt-3 Ver horarios disponibles
 
   hr
 
@@ -35,41 +54,66 @@ block content
     li Si ya tiene ficha para hoy, no podrá reservar otra.
     li Los horarios que aparecen como “Ocupado” no están disponibles.
 
-  // --- SCRIPT PARA VALIDAR FECHAS PERMITIDAS ---
   script.
     let fechasPermitidas = !{JSON.stringify(dates)};
-    console.log("Fechas disponibles (antes):", fechasPermitidas);
-
-    // Quitar duplicados y ordenar
     fechasPermitidas = Array.from(new Set(fechasPermitidas)).sort();
-    console.log("Fechas disponibles (ordenadas):", fechasPermitidas);
 
-    const fechaInput = document.getElementById("fecha");
     const btn = document.getElementById("btnVerHorarios");
+    const calendarContainer = document.getElementById("calendar-container");
+    let fechaSeleccionada = null;
 
-    if (fechasPermitidas.length > 0) {
-      fechaInput.min = fechasPermitidas[0];
-      fechaInput.max = fechasPermitidas[fechasPermitidas.length - 1];
+    function generarCalendario() {
+      const hoy = new Date();
+      const year = hoy.getFullYear();
+      const month = hoy.getMonth();
+
+      const primerDia = new Date(year, month, 1);
+      const ultimoDia = new Date(year, month + 1, 0);
+
+      const diasSemana = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+
+      let html = '<table class="table table-bordered text-center calendar"><thead><tr>';
+      diasSemana.forEach(d => html += `<th>${d}</th>`);
+      html += '</tr></thead><tbody><tr>';
+
+      for (let i = 0; i < primerDia.getDay(); i++) html += '<td></td>';
+
+      for (let dia = 1; dia <= ultimoDia.getDate(); dia++) {
+        const fecha = `${year}-${String(month+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
+
+        const disponible = fechasPermitidas.includes(fecha);
+
+        html += `<td class="dia ${disponible ? 'disponible' : 'no-disponible'}" data-fecha="${fecha}">${dia}</td>`;
+
+        if ((primerDia.getDay() + dia) % 7 === 0) html += '</tr><tr>';
+      }
+
+      html += '</tr></tbody></table>';
+      calendarContainer.innerHTML = html;
+
+      document.querySelectorAll('.dia.disponible').forEach(celda => {
+        celda.addEventListener('click', () => {
+          document.querySelectorAll('.seleccionado').forEach(el => el.classList.remove('seleccionado'));
+          celda.classList.add('seleccionado');
+          fechaSeleccionada = celda.dataset.fecha;
+        });
+      });
     }
 
-    btn.addEventListener("click", () => {
-      const fecha = fechaInput.value;
-      const specialtyId = document.getElementById("specialty").value;
+    generarCalendario();
+
+    btn.addEventListener('click', () => {
+      const specialtyId = document.getElementById('specialty').value;
 
       if (!specialtyId) {
-        alert("Debe seleccionar una especialidad.");
+        alert('Debe seleccionar una especialidad.');
         return;
       }
 
-      if (!fecha) {
-        alert("Debe seleccionar una fecha.");
+      if (!fechaSeleccionada) {
+        alert('Debe seleccionar una fecha del calendario.');
         return;
       }
 
-      if (!fechasPermitidas.includes(fecha)) {
-        alert("La fecha seleccionada NO está disponible.\nSolo puede seleccionar entre las fechas habilitadas.");
-        return;
-      }
-
-      window.location.href = `/patient/horarios?date=${fecha}&specialtyId=${specialtyId}`;
+      window.location.href = `/patient/horarios?date=${fechaSeleccionada}&specialtyId=${specialtyId}`;
     });

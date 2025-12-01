@@ -1,24 +1,24 @@
 extends ../layout_admin
 
 block content
-  h1 Especialidades registradas
+  .container.mt-4
+    h1.mb-4.text-primary Especialidades registradas
 
-  a(href="/admin/specialties/new") Registrar nueva especialidad
+    a.btn.btn-success.mb-3(href="/admin/specialties/new") Registrar nueva especialidad
 
-  table(border="1" cellpadding="6")
-    thead
-      tr
-        th ID
-        th Nombre
-        th ¿General?
-        th Acciones
-    tbody
-      each s in specialties
+    table.table.table-striped.table-bordered.table-hover
+      thead.table-dark
         tr
-          td= s.id
-          td= s.name
-          td= s.isGeneral ? 'Sí' : 'No'
-          td
-            a(href=`/admin/specialties/${s.id}/edit`) Editar
-            |  |
-            a(href=`/admin/specialties/${s.id}/delete`) Eliminar
+          th ID
+          th Nombre
+          th ¿General?
+          th Acciones
+      tbody
+        each s in specialties
+          tr
+            td= s.id
+            td= s.name
+            td= s.isGeneral ? 'Sí' : 'No'
+            td
+              a.btn.btn-sm.btn-primary.me-1(href=`/admin/specialties/${s.id}/edit`) Editar
+              a.btn.btn-sm.btn-danger(href=`/admin/specialties/${s.id}/delete`) Eliminar
