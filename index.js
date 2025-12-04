@@ -55,7 +55,7 @@ app.set('view engine', 'pug');
 // Ruta raíz para probar Render
 // ----------------------------
 app.get('/', (req, res) => {
-  res.send('🩺 API SUS — Gestor de Citas funcionando correctamente ✔️');
+  return res.redirect('/auth/login');
 });
 
 //LOGIN
