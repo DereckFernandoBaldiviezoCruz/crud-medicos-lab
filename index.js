@@ -14,11 +14,10 @@ import adminRoutes from './routes/admin.routes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// Opcionales (si luego quieres crear más controladores)
-import userRoutes from './routes/user.routes.js';       // CRUD usuarios
-import patientRoutes from './routes/patient.routes.js'; // CRUD pacientes (API)
-import medicRoutes from './routes/medic.routes.js';     // CRUD/vistas médico
-import patientPanelRoutes from './routes/patientPanel.routes.js'; // panel paciente
+import userRoutes from './routes/user.routes.js';
+import patientRoutes from './routes/patient.routes.js';
+import medicRoutes from './routes/medic.routes.js';
+import patientPanelRoutes from './routes/patientPanel.routes.js';
 
 import session from 'express-session';
 
@@ -38,10 +37,9 @@ app.use(session({
 // Middlewares de auth / roles
 // =============================
 
-// Solo comprobar sesión
+// Solo comprobar sesión → si no hay, al login
 function requireLogin(req, res, next) {
   if (!req.session.user) {
-    // ⬅ si no hay sesión → al login
     return res.redirect('/auth/login');
   }
   next();
@@ -51,15 +49,27 @@ function requireLogin(req, res, next) {
 function requireRole(...rolesPermitidos) {
   return (req, res, next) => {
     if (!req.session.user) {
-      // ⬅ si no hay sesión → al login
+      // sin sesión → al login
       return res.redirect('/auth/login');
     }
 
+    // con sesión pero rol incorrecto → 403 con vista
     if (!rolesPermitidos.includes(req.session.user.role)) {
-      // ⬅ hay sesión, pero rol incorrecto → página de no autorizado
-      return res.status(403).render('errors/not_authorized', {
-        user: req.session.user
-      });
+      console.log('❌ Acceso denegado. Usuario en sesión:', req.session.user);
+
+      // usamos callback en render por si falla la vista
+      return res.status(403).render(
+        'errors/not_authorized',
+        { user: req.session.user },
+        (err, html) => {
+          if (err) {
+            console.error('Error renderizando not_authorized:', err);
+            // Fallback simple
+            return res.status(403).send('No autorizado');
+          }
+          res.send(html);
+        }
+      );
     }
 
     next();
@@ -70,15 +80,12 @@ function requireRole(...rolesPermitidos) {
 // Configuración de vistas y estáticos
 // =============================
 
-// Usar fileURLToPath para obtener __dirname en ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Motor de vistas PUG
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
-// Archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
 
 // =============================
@@ -89,12 +96,12 @@ app.get('/', (req, res) => {
   return res.redirect('/auth/login');
 });
 
-// LOGIN (formulario)
+// Formulario de login
 app.get('/auth/login', (req, res) => {
   res.render('login');
 });
 
-// LOGOUT – destruir sesión
+// Logout – destruir sesión
 app.get('/logout', (req, res) => {
   req.session.destroy(err => {
     if (err) {
@@ -106,43 +113,43 @@ app.get('/logout', (req, res) => {
 });
 
 // =============================
-// Rutas principales del sistema
+// Rutas protegidas
 // =============================
 
-// Login (API/controlador)
+// API login
 app.use('/auth', authRoutes);
 
-// Panel del paciente SUS (solo rol "patient")
+// Panel del paciente SUS (solo patient)
 app.use('/patient', requireRole('patient'), patientPanelRoutes);
 
-// Administración (solo rol "admin")
+// Admin (solo admin)
 app.use('/admin', requireRole('admin'), adminRoutes);
 
-// Citas (admin y médico)
+// Citas (admin y medic)
 app.use('/appointments', requireRole('admin', 'medic'), appointmentRoutes);
 
-// Consultas médicas (solo médico)
+// Consultas (solo medic)
 app.use('/consultations', requireRole('medic'), consultationRoutes);
 
-// Derivaciones (admin o médico)
+// Derivaciones (admin o medic)
 app.use('/referrals', requireRole('admin', 'medic'), referralRoutes);
 
-// CRUD de usuarios (solo admin)
+// CRUD usuarios (admin)
 app.use('/users', requireRole('admin'), userRoutes);
 
-// CRUD de pacientes API (solo admin)
+// CRUD pacientes API (admin)
 app.use('/patients', requireRole('admin'), patientRoutes);
 
-// CRUD de médicos (solo admin)
+// CRUD médicos (admin)
 app.use('/medics', requireRole('admin'), medicRoutes);
 
-// Panel del médico (citas, consulta, receta) – solo médico
+// Panel del médico (solo medic)
 app.use('/medic', requireRole('medic'), medicRoutes);
 
-// Disponibilidades (solo admin)
+// Availabilities (admin)
 app.use('/availabilities', requireRole('admin'), availabilityRoutes);
 
-// Slots de agenda (solo admin, si lo usas así)
+// Slots (admin)
 app.use('/scheduleslots', requireRole('admin'), scheduleSlotRoutes);
 
 // =============================
