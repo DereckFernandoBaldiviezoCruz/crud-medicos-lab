@@ -10,18 +10,17 @@ import consultationRoutes from './routes/consultation.routes.js';
 import referralRoutes from './routes/referral.routes.js';
 import availabilityRoutes from './routes/availability.routes.js';
 import scheduleSlotRoutes from './routes/scheduleSlot.routes.js';
-import adminRoutes from './routes/admin.routes.js'; // 👈 NUEVA
-import path from 'path'; 
-import { fileURLToPath } from 'url'; 
+import adminRoutes from './routes/admin.routes.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Opcionales (si luego quieres crear más controladores)
 import userRoutes from './routes/user.routes.js';       // CRUD usuarios
-import patientRoutes from './routes/patient.routes.js'; // CRUD pacientes
-import medicRoutes from './routes/medic.routes.js';     // CRUD medicos
-import patientPanelRoutes from './routes/patientPanel.routes.js'; //panel paciente
+import patientRoutes from './routes/patient.routes.js'; // CRUD pacientes (API)
+import medicRoutes from './routes/medic.routes.js';     // CRUD/vistas médico
+import patientPanelRoutes from './routes/patientPanel.routes.js'; // panel paciente
+
 import session from 'express-session';
-
-
 
 dotenv.config();
 
@@ -30,91 +29,125 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
-  secret: "super-clave-sus", 
+  secret: "super-clave-sus",
   resave: false,
   saveUninitialized: false
 }));
 
+// =============================
+// Middlewares de auth / roles
+// =============================
+
+// Solo comprobar sesión
+function requireLogin(req, res, next) {
+  if (!req.session.user) {
+    // ⬅ si no hay sesión → al login
+    return res.redirect('/auth/login');
+  }
+  next();
+}
+
+// Comprobar sesión + rol permitido
+function requireRole(...rolesPermitidos) {
+  return (req, res, next) => {
+    if (!req.session.user) {
+      // ⬅ si no hay sesión → al login
+      return res.redirect('/auth/login');
+    }
+
+    if (!rolesPermitidos.includes(req.session.user.role)) {
+      // ⬅ hay sesión, pero rol incorrecto → página de no autorizado
+      return res.status(403).render('errors/not_authorized', {
+        user: req.session.user
+      });
+    }
+
+    next();
+  };
+}
+
+// =============================
+// Configuración de vistas y estáticos
+// =============================
 
 // Usar fileURLToPath para obtener __dirname en ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Configurar el motor de vistas PUG
+// Motor de vistas PUG
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
-// Configura la carpeta pública para servir archivos estáticos (si tienes imágenes o CSS)
+// Archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
-// Configuración de vistas (Pug)
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
 
-// Ruta raíz para probar
-// ----------------------------
-// Ruta raíz para probar Render
-// ----------------------------
+// =============================
+// Rutas base
+// =============================
+
 app.get('/', (req, res) => {
   return res.redirect('/auth/login');
 });
 
-//LOGIN
+// LOGIN (formulario)
 app.get('/auth/login', (req, res) => {
-  res.render('login'); // 👈 AHORA SÍ RENDERIZA PUG
+  res.render('login');
 });
-//END LOGIN
-// Ruta de logout
+
+// LOGOUT – destruir sesión
 app.get('/logout', (req, res) => {
-  // Aquí puedes limpiar la sesión o el token (si usas JWT)
-  res.redirect('/auth/login');  // Redirigir al formulario de login
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Error al cerrar sesión:', err);
+      return res.status(500).send('Error al cerrar sesión');
+    }
+    res.redirect('/auth/login');
+  });
 });
-// END LOGOUT
 
-// Rutas
-// ----------------------------
+// =============================
 // Rutas principales del sistema
-// ----------------------------
+// =============================
 
-// Login (usuarios del sistema)
+// Login (API/controlador)
 app.use('/auth', authRoutes);
 
-app.use('/patient', patientPanelRoutes);
+// Panel del paciente SUS (solo rol "patient")
+app.use('/patient', requireRole('patient'), patientPanelRoutes);
 
-// Administración (crear usuarios, pacientes, médicos, centros, especialidades)
-app.use('/admin', adminRoutes);
+// Administración (solo rol "admin")
+app.use('/admin', requireRole('admin'), adminRoutes);
 
-// Citas (crear y listar)
-app.use('/appointments', appointmentRoutes);
+// Citas (admin y médico)
+app.use('/appointments', requireRole('admin', 'medic'), appointmentRoutes);
 
-// Consultas médicas (diagnóstico, notas, receta)
-app.use('/consultations', consultationRoutes);
+// Consultas médicas (solo médico)
+app.use('/consultations', requireRole('medic'), consultationRoutes);
 
-// Derivaciones entre centros/especialidades
-app.use('/referrals', referralRoutes);
+// Derivaciones (admin o médico)
+app.use('/referrals', requireRole('admin', 'medic'), referralRoutes);
 
+// CRUD de usuarios (solo admin)
+app.use('/users', requireRole('admin'), userRoutes);
 
-// Conexión y sync
-// CRUD de usuarios (opcional)
-app.use('/users', userRoutes);
+// CRUD de pacientes API (solo admin)
+app.use('/patients', requireRole('admin'), patientRoutes);
 
-// CRUD de pacientes (opcional)
-app.use('/patients', patientRoutes);
+// CRUD de médicos (solo admin)
+app.use('/medics', requireRole('admin'), medicRoutes);
 
-// CRUD de médicos (opcional)
-app.use('/medics', medicRoutes);//crud de medicos desde el panel de admin
+// Panel del médico (citas, consulta, receta) – solo médico
+app.use('/medic', requireRole('medic'), medicRoutes);
 
-// Panel del médico (citas, consulta, no show)
-app.use('/medic', medicRoutes); //vistas del medico
+// Disponibilidades (solo admin)
+app.use('/availabilities', requireRole('admin'), availabilityRoutes);
 
+// Slots de agenda (solo admin, si lo usas así)
+app.use('/scheduleslots', requireRole('admin'), scheduleSlotRoutes);
 
-// Disponibilidades y turnos
-app.use('/availabilities', availabilityRoutes);
-app.use('/scheduleslots', scheduleSlotRoutes);
-
-
-// ----------------------------
+// =============================
 // Sincronizar DB
-// ----------------------------
+// =============================
 (async () => {
   try {
     await db.authenticate();
@@ -127,10 +160,9 @@ app.use('/scheduleslots', scheduleSlotRoutes);
   }
 })();
 
-
-// ----------------------------
+// =============================
 // Iniciar servidor
-// ----------------------------
+// =============================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✔ Servidor iniciado en puerto ${PORT}`);

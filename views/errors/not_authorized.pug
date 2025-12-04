@@ -1,0 +1,25 @@
+extends ../layout_patient
+
+block content
+  .container.mt-4
+    .row.justify-content-center
+      .col-md-8
+        .card.shadow-sm
+          .card-body.text-center
+            h2.text-danger.mb-3 Acceso no autorizado
+
+            if user
+              p.mb-2
+                | El usuario 
+                strong #{user.fullname} 
+                |  (rol: 
+                strong #{user.role}
+                | ) no tiene permiso para acceder a esta sección.
+            else
+              p.mb-2 No tienes permiso para acceder a esta sección.
+
+            p.mt-3
+              | Si crees que esto es un error, comunícate con el administrador del sistema.
+
+            .mt-4
+              a.btn.btn-primary.w-100(href="/auth/login") Volver al inicio de sesión →
